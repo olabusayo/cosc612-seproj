@@ -1,0 +1,2 @@
+rootProject.name='COSC612-Student-Andriod'
+include ':app'
