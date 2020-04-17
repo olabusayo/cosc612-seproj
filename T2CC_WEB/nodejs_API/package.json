@@ -1,0 +1,24 @@
+{
+  "name": "node.js-api",
+  "version": "1.0.0",
+  "description": "cosc612-proj",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olabusayo/cosc612-seproj.git"
+  },
+  "author": "Tahina, Tapasya, Lola, Anh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/olabusayo/cosc612-seproj/issues"
+  },
+  "homepage": "https://github.com/olabusayo/cosc612-seproj#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "firebase-admin": "^8.10.0",
+    "nodemon": "^2.0.3"
+  }
+}
