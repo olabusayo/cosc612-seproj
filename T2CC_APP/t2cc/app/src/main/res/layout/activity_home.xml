@@ -44,7 +44,7 @@
             app:srcCompat="@drawable/ic_mail_black_24dp" />
 
         <ImageView
-            android:id="@+id/logoutImages"
+            android:id="@+id/logoutImage"
             android:layout_width="54dp"
             android:layout_height="39dp"
             android:layout_gravity="center_vertical"
