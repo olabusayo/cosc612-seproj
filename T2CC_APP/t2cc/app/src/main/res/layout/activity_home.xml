@@ -4,21 +4,133 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.t2cc.HomeActivity">
+    tools:context="com.example.t2cc.Home">
 
-    <Button
-        android:id="@+id/logOutButton"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="162dp"
-        android:layout_marginLeft="162dp"
-        android:layout_marginTop="327dp"
-        android:layout_marginEnd="162dp"
-        android:layout_marginRight="162dp"
-        android:layout_marginBottom="356dp"
-        android:text="Log Out"
+    <ImageView
+        android:id="@+id/homeLogo"
+        android:layout_width="76dp"
+        android:layout_height="76dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.035"
+        app:srcCompat="@drawable/t2cc_logo" />
+
+    <LinearLayout
+        android:id="@+id/navigationHome"
+        android:layout_width="240dp"
+        android:layout_height="69dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginLeft="80dp"
+        android:background="@drawable/shape"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/homeLogo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.046">
+
+        <ImageView
+            android:id="@+id/messagesImage"
+            android:layout_width="71dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="0"
+            android:contentDescription="@string/messages_image"
+            android:paddingLeft="20dp"
+            app:srcCompat="@drawable/ic_mail_black_24dp" />
+
+        <ImageView
+            android:id="@+id/logoutImages"
+            android:layout_width="54dp"
+            android:layout_height="39dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="0"
+            android:src="@drawable/logout" />
+
+        <TextView
+            android:id="@+id/userInitial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0"
+            android:paddingLeft="5dp"
+            android:text="I.N."
+            android:textSize="39dp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/homeLeftContent"
+        android:layout_width="170dp"
+        android:layout_height="300dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginLeft="22dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rightHomeContent"
+        app:layout_constraintHorizontal_bias="0.222"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/navigationHome">
+
+        <TextView
+            android:id="@+id/myClassDescriptionLabel"
+            android:layout_width="133dp"
+            android:layout_height="130dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:text="Click on the button to see subscribed classes"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/myClassButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="MyClasses" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/rightHomeContent"
+        android:layout_width="170dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginRight="22dp"
+        android:background="@drawable/shape"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/navigationHome">
+
+        <TextView
+            android:id="@+id/browseClassDescipLabel"
+            android:layout_width="133dp"
+            android:layout_height="130dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:text="Subscribe to new classes"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/browseClassesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Browse Classes" />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

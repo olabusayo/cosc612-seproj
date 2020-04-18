@@ -33,7 +33,7 @@ public class LogoutActivity extends AppCompatActivity implements
     mAuthUI = AuthUI.getInstance();
 
     // prep buttons for onClick
-    findViewById(R.id.logOutButton).setOnClickListener(this);
+    //findViewById(R.id.logOutButton).setOnClickListener(this);
   }
 
   @Override
@@ -49,9 +49,9 @@ public class LogoutActivity extends AppCompatActivity implements
   @Override
   public void onClick(View v) {
     int i = v.getId();
-    if (i == R.id.logOutButton) {
-      logOut();
-    }
+//    if (i == R.id.logOutButton) {
+//      logOut();
+//    }
   }
 
   private void changeToLoginActivity() {
