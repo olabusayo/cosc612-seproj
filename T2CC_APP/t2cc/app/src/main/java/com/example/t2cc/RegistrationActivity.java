@@ -5,31 +5,51 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegistrationActivity extends AppCompatActivity implements
     View.OnClickListener {
 
-  private static final String TAG = "Registration";
+  private final static String TAG = "T2CC:Registration";
+  String mStudentsCollection = "students";
   // Firebase Auth
   private FirebaseAuth mAuth;
+  private FirebaseFirestore mFBDB;
+  private FirebaseAuth.AuthStateListener mAuthListener;
+
   // Form Details
   private EditText mFirstNameField;
   private EditText mLastNameField;
   private EditText mEmailField;
   private EditText mPasswordField;
   private EditText mPasswordConfirmationField;
+
+  //Button
+  private Button mRegisterButton;
+  private AuthUI mAuthUI;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -44,19 +64,30 @@ public class RegistrationActivity extends AppCompatActivity implements
     mPasswordConfirmationField = findViewById(R.id.confirmPasswordRegField);
 
     // Buttons
-    findViewById(R.id.registrationButton).setOnClickListener(this);
+    mRegisterButton = findViewById(R.id.registrationButton);
+    mRegisterButton.setOnClickListener(this);
 
     //firebase Auth
     mAuth = FirebaseAuth.getInstance();
-
+    mAuthUI = AuthUI.getInstance();
+    mFBDB = FirebaseFirestore.getInstance();
+    mAuthListener = new FirebaseAuth.AuthStateListener() {
+      @Override
+      public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+          if (user.isEmailVerified()) {
+            Log.d(TAG, "emailVerified:success");
+            addToStudentDatabase(user);
+          }
+        }
+      }
+    };
   }
 
   @Override
   public void onStart() {//check if user is signed in
     super.onStart();
-    // Check if user is signed in (non-null) and update UI accordingly.
-    FirebaseUser currentUser = mAuth.getCurrentUser();
-    //updateUI(currentUser);
   }
 
   @Override
@@ -73,11 +104,6 @@ public class RegistrationActivity extends AppCompatActivity implements
     startActivity(intent);
   }
 
-  private void changeToHomeScreenActivity() {
-    Intent intent = new Intent(RegistrationActivity.this, HomeActivity.class);
-    startActivity(intent);
-  }
-
   private void registerUser(String fName, String lName, String email, String password) {
     Log.d(TAG, "register:" + email);
     if (!validateRegistrationForm()) {
@@ -91,23 +117,73 @@ public class RegistrationActivity extends AppCompatActivity implements
           @Override
           public void onComplete(@NonNull Task<AuthResult> task) {
             if (task.isSuccessful()) {
-              // Sign in success, update UI with the signed-in user's information
+              // registration success, update UI with the signed-in user's information
               Log.d(TAG, "createUserWithEmail:success");
               FirebaseUser user = mAuth.getCurrentUser();
+              mAuth.addAuthStateListener(mAuthListener);
               // populate profile with name info
               updateUserProfile(user, userFullName);
               // do email verification
               sendEmailVerification();
-              changeToHomeScreenActivity();
+              mAuthUI.signOut(RegistrationActivity.this); //sign out automatically signed in user
+              Toast.makeText(RegistrationActivity.this, "Creating Account",
+                  Toast.LENGTH_LONG).show();
+              changeToLoginActivity();
             } else {
-              // If sign in fails, display a message to the user.
-              Log.w(TAG, "createUserWithEmail:failure", task.getException());
-              Toast.makeText(RegistrationActivity.this, "Authentication failed.",
-                  Toast.LENGTH_SHORT).show();
-              updateUI(null);
+              // registration fails, display a message to the user.
+              Exception genException = task.getException();
+              Log.w(TAG, "createUserWithEmail:failure", genException);
+              try {
+                throw genException;
+              } catch (FirebaseAuthWeakPasswordException e) {
+                mPasswordField.setError(genException.getMessage());
+                mPasswordField.requestFocus();
+              } catch (FirebaseAuthUserCollisionException | FirebaseAuthInvalidCredentialsException e) {
+                String m = e.getMessage();
+                if( m.contains("email"))  {
+                  mEmailField.setError(e.getMessage());
+                  mEmailField.requestFocus();
+                } else {
+                  mPasswordField.setError(e.getMessage());
+                  mPasswordField.requestFocus();
+                }
+              } catch (Exception e) {
+                Toast.makeText(RegistrationActivity.this, "Registration failed.\n" + genException.getMessage(),
+                    Toast.LENGTH_LONG).show();
+              }
             }
           }
         });
+  }
+
+  private void addToStudentDatabase(FirebaseUser user) {
+    if (user != null) {
+      String mEmail = user.getEmail();
+      String[] mFullName = user.getDisplayName().split(" ");
+      String mFirstName = mFullName[0];
+      String mLastName = mFullName[1];
+
+      Map<String, Object> student = new HashMap<>();
+      student.put("fname", mFirstName);
+      student.put("lname", mLastName);
+      student.put("email", mEmail);
+
+      mFBDB.collection(mStudentsCollection)
+          .add(student)
+          .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+              Log.d(TAG, "studentAdded:" + documentReference.getId());
+              mAuth.removeAuthStateListener(mAuthListener);
+            }
+          })
+          .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+              Log.w(TAG, "studentAdded:failure", e);
+            }
+          });
+    }
   }
 
   private boolean validateRegistrationForm() {
@@ -116,14 +192,16 @@ public class RegistrationActivity extends AppCompatActivity implements
     String firstName = mFirstNameField.getText().toString();
     if (TextUtils.isEmpty(firstName)) {
       mFirstNameField.setError("Required.");
+      mFirstNameField.requestFocus();
       valid = false;
     } else {
       mFirstNameField.setError(null);
     }
 
     String lastName = mLastNameField.getText().toString();
-    if (TextUtils.isEmpty(firstName)) {
+    if (TextUtils.isEmpty(lastName)) {
       mLastNameField.setError("Required.");
+      mLastNameField.requestFocus();
       valid = false;
     } else {
       mLastNameField.setError(null);
@@ -132,6 +210,7 @@ public class RegistrationActivity extends AppCompatActivity implements
     String email = mEmailField.getText().toString();
     if (TextUtils.isEmpty(email)) {
       mEmailField.setError("Required.");
+      mEmailField.requestFocus();
       valid = false;
     } else {
       mEmailField.setError(null);
@@ -140,6 +219,7 @@ public class RegistrationActivity extends AppCompatActivity implements
     String password = mPasswordField.getText().toString();
     if (TextUtils.isEmpty(password)) {
       mPasswordField.setError("Required.");
+      mPasswordField.requestFocus();
       valid = false;
     } else {
       mPasswordField.setError(null);
@@ -148,12 +228,14 @@ public class RegistrationActivity extends AppCompatActivity implements
     String passwordConfirm = mPasswordConfirmationField.getText().toString();
     if (TextUtils.isEmpty(passwordConfirm)) {
       mPasswordConfirmationField.setError("Required.");
+      mPasswordConfirmationField.requestFocus();
       valid = false;
     } else if (!password.equals(passwordConfirm)) {
-      mPasswordConfirmationField.setError("Passwords must match.");
+      mPasswordConfirmationField.setError("Passwords don't match.");
+      mPasswordConfirmationField.requestFocus();
       valid = false;
     } else {
-      mPasswordField.setError(null);
+      mPasswordConfirmationField.setError(null);
     }
 
     return valid;
@@ -170,7 +252,9 @@ public class RegistrationActivity extends AppCompatActivity implements
             @Override
             public void onComplete(@NonNull Task<Void> task) {
               if (task.isSuccessful()) {
-                Log.d(TAG, "User profile updated.");
+                Log.d(TAG, "updateProfile:success");
+              } else {
+                Log.e(TAG, "updateProfile:failure", task.getException());
               }
             }
           });
@@ -180,26 +264,15 @@ public class RegistrationActivity extends AppCompatActivity implements
   private void sendEmailVerification() {
     final FirebaseUser user = mAuth.getCurrentUser();
     user.sendEmailVerification()
-        .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+        .addOnCompleteListener(new OnCompleteListener<Void>() {
           @Override
           public void onComplete(@NonNull Task<Void> task) {
             if (task.isSuccessful()) {
-              Toast.makeText(RegistrationActivity.this,
-                  "Verification email sent to " + user.getEmail(),
-                  Toast.LENGTH_SHORT).show();
-              changeToLoginActivity();
+              Log.d(TAG, "sendEmailVerification:success");
             } else {
-              Log.e(TAG, "sendEmailVerification", task.getException());
-              Toast.makeText(RegistrationActivity.this,
-                  "Failed to send verification email.",
-                  Toast.LENGTH_SHORT).show();
+              Log.e(TAG, "sendEmailVerification:failure", task.getException());
             }
           }
         });
   }
-
-  private void updateUI(FirebaseUser user) {
-    // do nothing for now
-  }
-
 }
