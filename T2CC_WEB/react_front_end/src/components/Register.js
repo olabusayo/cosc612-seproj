@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { register } from './UserFunctions'
+import { register } from '../service/Userservice'
 
 const emailRegex= RegExp(/^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/);
 const passRegex=RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/);
@@ -26,7 +26,6 @@ class Register extends Component {
         last_name: '',
         email: '',
         password: '',
-
       }
     }
 
@@ -51,42 +50,37 @@ class Register extends Component {
         case 'password':
                 formErrors.password= passRegex.test(value) && value.length > 0 ? '':' invalid email password';
                 break;
-            default:
+        default:
             break;
-
-
     }
 
     this.setState({formErrors, [name]:value}, ()=>console.log(this.state));
-
 
   }
   onSubmit(e) {
     e.preventDefault()
 
-    if(formValid(this.state.errors)){
-        console.log('FirstName:'+this.state.first_name+
-        "LastName:"+this.state.last_name+
-        "Password"+  this.state.password      )
-            
-        
-    }else
-    {
-console.error("Form invalid")
-    }
-    console.log('Form Submitted:');
-    console.log('Todo First NAme:'+this.state.first_name);
+    // if(formValid(this.state.errors)) {
+    //     console.log('FirstName:'+this.state.first_name+
+    //     "LastName:"+this.state.last_name+
+    //     "Password"+  this.state.password      )
+              
+    // } else {
+    //   console.error("Form invalid")
+    // }
 
     const newUser = {
-      first_name: this.state.first_name,
-      last_name: this.state.last_name,
+      fname: this.state.first_name,
+      lname: this.state.last_name,
       email: this.state.email,
       password: this.state.password
     }
 
-   /* register(newUser).then(res => {
-      this.props.history.push(`/login`)
-    })*/
+    register(newUser).then((user) => {
+      console.log(user);
+      this.props.history.push('/login');
+    });
+    
   }
 
   render() {
@@ -150,7 +144,7 @@ console.error("Form invalid")
                 type="submit"
                 className="btn btn-lg btn-primary btn-block"
               >
-                Register!
+                Register
               </button>
             </form>
           </div>

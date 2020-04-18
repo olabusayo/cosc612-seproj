@@ -1,7 +1,11 @@
-import React, { Component } from 'react'
+import React, { Component, useContext } from 'react';
+import Login from "./Login";
+import userContext from "../providers/UserProvider";
 
 class Landing extends Component {
+
   render() {
+
     return (
       <div className="container">
         <div className="jumbotron mt-5">

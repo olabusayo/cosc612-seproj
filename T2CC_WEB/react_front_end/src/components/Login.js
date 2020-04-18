@@ -1,5 +1,6 @@
-import React, { Component } from 'react'
-import { login } from './UserFunctions'
+import React, { Component } from 'react';
+import { login } from '../service/Userservice';
+import {useHistory} from "react-router-dom";
 
 class Login extends Component {
   constructor() {
@@ -7,7 +8,7 @@ class Login extends Component {
     this.state = {
       email: '',
       password: '',
-      errors: {}
+      error: ''
     }
 
     this.onChange = this.onChange.bind(this)
@@ -17,20 +18,24 @@ class Login extends Component {
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value })
   }
+
   onSubmit(e) {
     e.preventDefault()
-    console.log(' email:'+this.state.email);
 
     const user = {
       email: this.state.email,
       password: this.state.password
     }
 
-   login(user).then(res => {
-     // if (res) {
-        this.props.history.push(`/profile`)
-      //}
+    login(user).then(() => {
+      this.props.history.push("/");
     })
+    .catch(e => {
+      this.setState({
+        error : "The email/password are invalid. Please re-enter your credentials."
+      });
+    })
+    
   }
 
   render() {
@@ -40,6 +45,7 @@ class Login extends Component {
           <div className="col-md-6 mt-5 mx-auto">
             <form noValidate onSubmit={this.onSubmit}>
               <h1 className="h3 mb-3 font-weight-normal">Please sign in</h1>
+              <p>{this.state.error}</p>
               <div className="form-group">
                 <label htmlFor="email">Email address</label>
                 <input

@@ -1,11 +1,16 @@
 import React, { Component } from 'react'
 import { Link, withRouter } from 'react-router-dom'
+import { logout } from "../service/Userservice"
 
 class Landing extends Component {
-  logOut(e) {
-    e.preventDefault()
-    localStorage.removeItem('usertoken')
-    this.props.history.push(`/`)
+
+  constructor() {
+    super();
+  }
+
+  logOut() {
+    logout();
+    //this.props.history.push('/');
   }
 
   render() {
@@ -20,6 +25,9 @@ class Landing extends Component {
           <Link to="/register" className="nav-link">
             Register
           </Link>
+        </li>
+        <li className="nav-item">
+          <a href="#" className="nav-link" onClick={ this.logOut }>logout</a>
         </li>
       </ul>
     )
