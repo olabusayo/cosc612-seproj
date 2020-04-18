@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/classNumberRowLabel"
+        android:layout_width="89dp"
+        android:layout_height="match_parent"
+        android:paddingLeft="10dp"
+        android:text="Class #1" />
+
+    <TextView
+        android:id="@+id/classNameRowLabel"
+        android:layout_width="97dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0"
+        android:text="Class Name" />
+
+    <Switch
+        android:id="@+id/subscribeSwitchRow"
+        android:layout_width="41dp"
+        android:layout_height="24dp" />
+
+    <ImageView
+        android:id="@+id/notificationImageRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        app:srcCompat="@drawable/ic_notifications_none_black_24dp" />
+
+    <TextView
+        android:id="@+id/subUnsubLabel"
+        android:layout_width="86dp"
+        android:layout_height="wrap_content"
+        android:text="Subscribe" />
+
+    <TextView
+        android:id="@+id/statusLabelRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pending" />
+</LinearLayout>
+
