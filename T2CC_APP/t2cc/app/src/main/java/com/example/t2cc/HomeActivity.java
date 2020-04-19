@@ -31,6 +31,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     findViewById(R.id.logoutImage).setOnClickListener(this);
     findViewById(R.id.homeLogo).setOnClickListener(this);
     findViewById(R.id.browseClassesButton).setOnClickListener(this);
+    findViewById(R.id.myClassButton).setOnClickListener(this);
   }
 
   @Override
@@ -54,13 +55,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
   @Override
   public void onClick(View v) {
     int i = v.getId();
+
     if (i == R.id.browseClassesButton) {
       changeToBrowseActivity();
-    } else if (i == R.id.logoutImage) {
+    } else if (i == R.id.myClassButton){
+      changeToMyClassActivity();
+    }else if (i == R.id.logoutImage) {
       Toast.makeText(HomeActivity.this, "Goodbye.",
           Toast.LENGTH_SHORT).show();
       logOut();
     }
+  }
+
+  private void changeToMyClassActivity(){
+    Intent intent = new Intent(HomeActivity.this, MyClassActivity.class);
+    startActivity(intent);
   }
 
   private void changeToBrowseActivity() {

@@ -3,72 +3,71 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".MyClassActivity">
 
     <TextView
-        android:id="@+id/homeLabel"
+        android:id="@+id/myClassHomeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="35dp"
         android:text="HOME"
         android:textColor="#03A9F4"
         android:textSize="15dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.043"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.049" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/subscribeArrow"
+        android:id="@+id/myClassArrow"
         android:layout_width="16dp"
         android:layout_height="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/homeLabel"
+        android:layout_marginTop="35dp"
+        app:layout_constraintStart_toEndOf="@+id/myClassHomeLabel"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.049"
         app:srcCompat="@drawable/ic_chevron_right_black_24dp" />
 
     <TextView
-        android:id="@+id/subscribe2ClassHeaderLabel"
+        android:id="@+id/myClassHeaderLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
         android:layout_marginBottom="2dp"
-        android:text="Subscribe To Classes"
+        android:text="My Classes"
         android:textSize="15dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/subscribeArrow"
+        app:layout_constraintStart_toEndOf="@+id/myClassArrow"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.049" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/subscribe2ClassSubBodyLabel"
+        android:id="@+id/myClassBodyLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
-        android:text="Classes Available For Subscription: "
+        android:layout_marginTop="28dp"
+        android:text="Active/Subscribed Classes "
         android:textColor="#03A9F4"
         android:textSize="15dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.069"
+        app:layout_constraintHorizontal_bias="0.07"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/myClassHeaderLabel" />
 
 
     <LinearLayout
-        android:id="@+id/classHeaderView"
+        android:id="@+id/myClassHeaderView"
         android:layout_width="409dp"
         android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subscribe2ClassSubBodyLabel">
+        app:layout_constraintTop_toBottomOf="@+id/myClassBodyLabel">
 
         <TextView
             android:id="@+id/classNumberHeader"
@@ -92,9 +91,10 @@
         <TextView
             android:id="@+id/subUnsubLabel"
             android:layout_width="80dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="0"
-            android:text="Toggle To Subscribe"
+            android:gravity="bottom"
+            android:text="Notification ON/OFF"
             android:textStyle="bold" />
 
         <TextView
@@ -103,19 +103,18 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_weight="0"
-            android:text="Request"
+            android:text="Unread"
             android:textStyle="bold" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/subscribe2ClassRecycleView"
+        android:id="@+id/myClassRecycleView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/shape"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/classHeaderView" />
-
+        app:layout_constraintTop_toBottomOf="@id/myClassHeaderView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

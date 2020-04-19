@@ -11,7 +11,6 @@ public class BrowseClassViewHolder extends RecyclerView.ViewHolder {
 
     TextView classNumberRowLabel;
     TextView classNameRowLabel;
-    TextView subUnsubLabel;
     TextView statusLabelRow;
     Switch subscribeSwitchRow;
 
@@ -20,7 +19,6 @@ public class BrowseClassViewHolder extends RecyclerView.ViewHolder {
 
         classNameRowLabel = (TextView)itemView.findViewById(R.id.classNameRowLabel);
         classNumberRowLabel = (TextView)itemView.findViewById(R.id.classNumberRowLabel);
-        subUnsubLabel = (TextView)itemView.findViewById(R.id.subUnsubLabel);
         statusLabelRow = (TextView)itemView.findViewById(R.id.statusLabelRow);
         subscribeSwitchRow = (Switch)itemView.findViewById(R.id.subscribeSwitchRow);
     }
