@@ -24,19 +24,19 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
     if (i == R.id.browseClassesButton) {
       changeToBrowseActivity();
-    } else if (i == R.id.myClassButton){
+    } else if (i == R.id.myClassButton) {
       changeToMyClassActivity();
     }
 
   }
 
-  private void changeToMyClassActivity(){
+  private void changeToMyClassActivity() {
     Intent intent = new Intent(HomeActivity.this, MyClassActivity.class);
     startActivity(intent);
   }
 
   private void changeToBrowseActivity() {
-    Intent intent = new Intent(HomeActivity.this, BrowseClassActivity.class);
+    Intent intent = new Intent(HomeActivity.this, BrowseClassesActivity.class);
     startActivity(intent);
   }
 
