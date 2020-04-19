@@ -11,18 +11,25 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity implements
     View.OnClickListener {
 
-  private static final String TAG = "Login";
+  private final static String TAG = "T2CC:Login";
   // Firebase Auth
   private FirebaseAuth mAuth;
+  // Firebase Listener
+  private FirebaseAuth.AuthStateListener mAuthListener;
+  // Firebase Signout
+  private AuthUI mAuthUI;
 
   // Form Details
   private EditText mEmailField;
@@ -35,6 +42,7 @@ public class LoginActivity extends AppCompatActivity implements
 
     //firebase Auth
     mAuth = FirebaseAuth.getInstance();
+    mAuthUI = AuthUI.getInstance();
 
     // login info
     mEmailField = findViewById(R.id.usernameLoginField);
@@ -48,11 +56,6 @@ public class LoginActivity extends AppCompatActivity implements
   @Override
   public void onStart() {//check if user is signed in
     super.onStart();
-    // Check if user is signed in (non-null) and update UI accordingly.
-    FirebaseUser currentUser = mAuth.getCurrentUser();
-//    if (currentUser != null) {
-//      changeToHomeScreenActivity();
-//    }
   }
 
   @Override
@@ -70,15 +73,18 @@ public class LoginActivity extends AppCompatActivity implements
     startActivity(intent);
   }
 
-  private void changeToHomeScreenActivity() {
+  private void changeToHomeActivity() {
     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
     startActivity(intent);
   }
 
-  private void logIn(String email, String password) {
+  private void logIn(final String email, String password) {
     Log.d(TAG, "logIn:" + email);
+    FirebaseUser currentUser = mAuth.getCurrentUser();
     if (!validateLoginForm()) {
       return;
+    } else if (currentUser != null && currentUser.isEmailVerified()) {
+      changeToHomeActivity();
     }
 
     mAuth.signInWithEmailAndPassword(email, password)
@@ -86,15 +92,36 @@ public class LoginActivity extends AppCompatActivity implements
           @Override
           public void onComplete(@NonNull Task<AuthResult> task) {
             if (task.isSuccessful()) {
+              FirebaseUser currentUser = mAuth.getCurrentUser();
               // Sign in success, update UI with the signed-in user's information
-              Log.d(TAG, "signInWithEmail:success");
-              FirebaseUser user = mAuth.getCurrentUser();
-              changeToHomeScreenActivity();
+              if (currentUser.isEmailVerified()) {
+                Log.d(TAG, "signInWithEmail:success");
+                changeToHomeActivity();
+              } else {
+                Log.d(TAG, "userNotVerified");
+                mEmailField.setError("Email not verified");
+                mEmailField.requestFocus();
+                mAuthUI.signOut(LoginActivity.this);
+              }
             } else {
-              // If sign in fails, display a message to the user.
-              Log.w(TAG, "signInWithEmail:failure", task.getException());
-              Toast.makeText(LoginActivity.this, "Authentication failed.",
-                  Toast.LENGTH_SHORT).show();
+              // If sign in fails, display a message to the user
+              Exception genException = task.getException();
+              Log.w(TAG, "signInWithEmail:failure", genException);
+              try {
+                throw genException;
+              } catch (FirebaseAuthInvalidCredentialsException | FirebaseAuthInvalidUserException e) {
+                String m = e.getMessage();
+                if (m.contains("email")) {
+                  mEmailField.setError(e.getMessage());
+                  mEmailField.requestFocus();
+                } else {
+                  mPasswordField.setError(e.getMessage());
+                  mPasswordField.requestFocus();
+                }
+              } catch (Exception e) {
+                Toast.makeText(LoginActivity.this, "Authentication failed.\n" + genException.getMessage(),
+                    Toast.LENGTH_LONG).show();
+              }
               updateUI(null);
             }
           }
