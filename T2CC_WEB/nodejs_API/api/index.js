@@ -1,5 +1,5 @@
 let router = require('express').Router();
 
-router.use('/auth', require('./authentication/auth'));
+router.use('/teacher', require('./service/teacherservice'));
 
 module.exports = router;
