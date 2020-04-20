@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/myClassrow">
+
+    <TextView
+        android:id="@+id/myClassNumberRowLabel"
+        android:layout_width="92dp"
+        android:layout_height="20dp"
+        android:layout_weight="0"
+        android:layout_gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:text="COSC602-02" />
+
+    <TextView
+        android:id="@+id/myClassNameRowLabel"
+        android:layout_width="180dp"
+        android:layout_height="60dp"
+        android:gravity="center_vertical"
+        android:layout_weight="0"
+        android:paddingLeft="5dp"
+        android:text="12345678901234567890123456789012345678901234567890" />
+
+    <Switch
+        android:id="@+id/notificationSwitchRow"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="17.5dp"
+        android:layout_marginRight="17.5dp"/>
+
+    <TextView
+        android:id="@+id/unreadMessageRowLabel"
+        android:layout_width="60dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_horizontal"
+        android:text="1"
+        android:textColor="#F44336" />
+</LinearLayout>
+
