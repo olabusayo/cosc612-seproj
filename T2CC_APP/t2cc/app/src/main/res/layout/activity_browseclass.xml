@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
-        android:text="Classes Available For Subscription: "
+        android:text="Available Classes"
         android:textColor="#03A9F4"
         android:textSize="15dp"
         android:textStyle="bold"
@@ -94,7 +94,8 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="Toggle To Subscribe"
+            android:text="Subscribe"
+            android:layout_gravity="bottom"
             android:textStyle="bold" />
 
         <TextView
