@@ -7,24 +7,36 @@ export const register = newUser => {
     'Content-Type': 'application/json',
   }
 
-  auth.createUserWithEmailAndPassword(newUser.email, newUser.password).catch(err => {
+  return auth.createUserWithEmailAndPassword(newUser.email, newUser.password)
+  .then((data) => {
+    newUser["uid"] = data.user.uid;
+    // let teacher = auth.currentUser;
+    // teacher.updateProfile({
+    //   displayName: newUser.fname,
+    // }).then(() => {
+      
+    // });
+    axios.post(param.baseUrl + '/api/teacher/add', newUser , { headers: param.headers });
+  }) 
+  .catch(err => {
     throw err;
   });
-
-  return axios.post(param.baseUrl + '/api/teacher/add', newUser , { headers: param.headers })
-
+  
 }
+
+export const getTeacher = email => {
+  return axios.get(param.baseUrl + '/api/teacher/authenticate/' + email);
+};
 
 export const login = user => {
   return axios.get(param.baseUrl + '/api/teacher/authenticate/' + user.email)
     .then(teacher => {
       let data = teacher.data;
       if(Object.keys(data).length === 0) {
-        throw new Error('Teacher does not exist');
+        throw new Error('Please enter an existing email.');
       } else {
-        auth.signInWithEmailAndPassword(user.email, user.password).catch(function(error) {
-          throw error;
-        });
+        console.log('hehe');
+        return auth.signInWithEmailAndPassword(user.email, user.password);
       }
     });
 
