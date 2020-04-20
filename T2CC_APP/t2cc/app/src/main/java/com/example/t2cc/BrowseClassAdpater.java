@@ -5,16 +5,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.Switch;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class BrowseClassAdpater extends RecyclerView.Adapter<BrowseClassViewHolder> {
@@ -48,9 +42,9 @@ public class BrowseClassAdpater extends RecyclerView.Adapter<BrowseClassViewHold
         Log.d(TAG, "BindViewHolder: called.");
 
         // set the information
-        holder.classNameRowLabel.setText(mdata.get(position).classNumber);
+        holder.classNumberRowLabel.setText(mdata.get(position).classNumber);
         holder.classNameRowLabel.setText(mdata.get(position).className);
-        holder.subUnsubLabel.setText(mdata.get(position).subscription);
+        holder.statusLabelRow.setText(mdata.get(position).status);
 
         if (mdata.get(position).subscription == "subscribe")
         {

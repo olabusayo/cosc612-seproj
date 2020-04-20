@@ -25,10 +25,11 @@ public class BrowseClassActivity extends AppCompatActivity {
 
         // set data
         List<classData> list = new ArrayList<>();
-        list.add(new classData("1", "cosc612", "unsubscribe", "None"));
-        list.add(new classData("2", "cosc123", "subscribe", "Done"));
-        list.add(new classData("3", "cosc546", "subscribe", "pending"));
-
+        list.add(new classData("cosc602-02", "123456789012345678901234567890123456789012345678901234567890", "unsubscribe", "None"));
+        list.add(new classData("cosc606-01", "1234567890123456789012345678901234567890", "subscribe", "Done"));
+        list.add(new classData("cosc602-01", "123456789012345678901234567890", "subscribe", "pending"));
+        list.add(new classData("cosc602-01", "12345678901234567890", "subscribe", "pending"));
+        list.add(new classData("cosc602-01", "1234567890", "subscribe", "pending"));
         // get recycle view
         recyclerView = (RecyclerView)findViewById(R.id.subscribe2ClassRecycleView);
         adapter = new BrowseClassAdpater(list, getApplication());
