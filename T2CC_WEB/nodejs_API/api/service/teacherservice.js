@@ -3,14 +3,15 @@ const admin = require('../../properties/firebase-admin');
 const db = require('../../properties/db');
 
 router.post('/add', (req, res) => {
-    const { fname, lname, email, password} = req.body;
+    
+    const { fname, lname, email, password, uid} = req.body;
     const teacher = {
         fname : fname,
         lname : lname,
-        email: email
+        email: email,
     }
     console.log(teacher);
-    let teacherRefs = db.collection('teachers').add(teacher);
+    let teacherRefs = db.collection('teachers').doc(uid).set(teacher);
     res.send(JSON.stringify(teacher));
 });
 
