@@ -6,12 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".MyClassActivity">
 
+
+    <include
+        android:id="@+id/appBar"
+        layout="@layout/appbar" />
+
     <TextView
         android:id="@+id/myClassHomeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="60dp"
         android:text="HOME"
         android:textColor="#03A9F4"
         android:textSize="15dp"
@@ -23,7 +28,7 @@
         android:id="@+id/myClassArrow"
         android:layout_width="16dp"
         android:layout_height="20dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="60dp"
         app:layout_constraintStart_toEndOf="@+id/myClassHomeLabel"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_chevron_right_black_24dp" />
@@ -32,7 +37,7 @@
         android:id="@+id/myClassHeaderLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="60dp"
         android:layout_marginBottom="2dp"
         android:text="My Classes"
         android:textSize="15dp"

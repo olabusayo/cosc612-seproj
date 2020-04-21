@@ -5,10 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include
+        android:id="@+id/appBar"
+        layout="@layout/appbar" />
+
     <TextView
         android:id="@+id/homeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:text="HOME"
         android:textColor="#03A9F4"
         android:textSize="15dp"
@@ -24,6 +29,7 @@
         android:id="@+id/subscribeArrow"
         android:layout_width="16dp"
         android:layout_height="20dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/homeLabel"
         app:layout_constraintTop_toTopOf="parent"
@@ -34,6 +40,7 @@
         android:id="@+id/subscribe2ClassHeaderLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="2dp"
         android:text="Subscribe To Classes"
         android:textSize="15dp"
@@ -49,7 +56,7 @@
         android:id="@+id/subscribe2ClassSubBodyLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="20dp"
         android:text="Available Classes"
         android:textColor="#03A9F4"
         android:textSize="15dp"
