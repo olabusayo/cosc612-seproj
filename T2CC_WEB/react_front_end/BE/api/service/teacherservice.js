@@ -1,5 +1,4 @@
 let router = require('express').Router();
-const admin = require('../../properties/firebase-admin');
 const db = require('../../properties/db');
 
 router.post('/add', (req, res) => {

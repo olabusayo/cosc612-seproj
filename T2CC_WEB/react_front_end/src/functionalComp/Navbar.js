@@ -1,11 +1,10 @@
 import React, { useContext } from 'react';
 import { logout } from "../service/Userservice"
-import { useHistory } from "react-router-dom"
 import { AuthContext } from "../providers/Auth";
 
 const Navbar = () => {
     let user = useContext(AuthContext);
-    console.log(user);
+
     const logOut = () => {
         logout();
     };
@@ -19,10 +18,10 @@ const Navbar = () => {
             <div className="collapse navbar-collapse justify-content-md-center" id="navbarsExample10">
                 <ul className="navbar-nav">
                     <li className="nav-item">
-                        <a  className="nav-link">{ user.email }</a>
+                        <a  className="nav-link" href="#">{ user.email }</a>
                     </li>
                     <li className="nav-item">
-                    <a  className="nav-link" onClick={ logOut }>Disconnect</a>
+                    <a className="nav-link" href="#" onClick={ logOut }>Disconnect</a>
                     </li>
                 </ul>
             </div>
