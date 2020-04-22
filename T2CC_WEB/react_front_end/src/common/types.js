@@ -1,0 +1,7 @@
+
+const TYPES = {
+  GET_SOLAR_INFO   : 'GET_SOLAR_INFO',
+  ERROR_SOLAR_INFO : 'ERROR_SOLAR_INFO'
+}
+
+export default TYPES;
