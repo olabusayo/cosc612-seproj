@@ -9,10 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MessageActivity"></activity>
-        <activity android:name=".BaseActivity" />
+        <activity android:name=".MessageActivity"/>
+    	<activity android:name=".BaseActivity" />
         <activity android:name=".MyClassActivity" />
-        <activity android:name=".BrowseClassActivity" />
+        <activity android:name=".BrowseClassesActivity" />
         <activity android:name=".HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
