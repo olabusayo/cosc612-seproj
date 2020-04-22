@@ -82,6 +82,12 @@ public class BaseActivity extends AppCompatActivity {
         toast.show();
       }
     });
+
+    findViewById(R.id.messagesImage).setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) {
+        changeToMessageActivity();
+      }
+    });
   }
 
   private void setStudentsInitials(FirebaseUser currentUser) {
@@ -94,6 +100,11 @@ public class BaseActivity extends AppCompatActivity {
   private void logOut() {
     mAuthUI.signOut(getApplicationContext());
     changeToLoginActivity();
+  }
+
+  private void changeToMessageActivity(){
+    Intent intent = new Intent(this, MessageActivity.class);
+    startActivity(intent);
   }
 
   private void changeToHomeActivity() {
