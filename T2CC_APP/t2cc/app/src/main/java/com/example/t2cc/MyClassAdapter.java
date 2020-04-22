@@ -15,11 +15,11 @@ public class MyClassAdapter extends RecyclerView.Adapter<MyClassViewHolder> {
     // for debugging
     private static final String TAG = "MyClassAdpater";
 
-    private List<myClassData> mdata;
+    private List<ClassListInformation> mdata;
     private Context mcontext;
 
     // constructor
-    public MyClassAdapter (List<myClassData> data, Context context){
+    public MyClassAdapter (List<ClassListInformation> data, Context context){
         mdata = data;
         mcontext = context;
     }
@@ -44,7 +44,7 @@ public class MyClassAdapter extends RecyclerView.Adapter<MyClassViewHolder> {
         // set the information
         holder.myClassNumberLabel.setText(mdata.get(position).classNumber);
         holder.myClassNameLabel.setText(mdata.get(position).className);
-        holder.myClassUnReadMsgLabel.setText(mdata.get(position).unReadMsg);
+        holder.myClassUnReadMsgLabel.setText((mdata.get(position).unreadMessageCount).toString());
 
     }
 

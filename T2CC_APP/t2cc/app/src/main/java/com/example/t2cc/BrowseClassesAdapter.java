@@ -60,7 +60,7 @@ public class BrowseClassesAdapter extends RecyclerView.Adapter<BrowseClassesView
     holder.subscribeSwitchRow.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        BrowseClassesActivity bcaObject = mdata.get(position).bcaObject;
+        BrowseClassesActivity bcaObject = (BrowseClassesActivity) mdata.get(position).activityObject;
         String classID = mdata.get(position).classID;
         Boolean isSubscriptionRequest = !mdata.get(position).subscription;
         bcaObject.handleSubscriptionToggle(bcaObject, classID, isSubscriptionRequest);
