@@ -15,13 +15,14 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
 public class BaseActivity extends AppCompatActivity {
 
   FirebaseFirestore mFBDB;
-  private String TAG = "Base Activity:";
-  private FirebaseAuth mAuth;
+  FirebaseAuth mAuth;
+  String mCurrentUserID;
+  FirebaseUser mCurrentUser;
+  private String TAG = "T2CC:BaseActivity:";
   private AuthUI mAuthUI;
 
   @Override
@@ -31,6 +32,8 @@ public class BaseActivity extends AppCompatActivity {
     mFBDB = FirebaseFirestore.getInstance();
     mAuth = FirebaseAuth.getInstance();
     mAuthUI = AuthUI.getInstance();
+    mCurrentUser = mAuth.getCurrentUser();
+    mCurrentUserID = mCurrentUser.getUid();
   }
 
   public void onStart() {//check if user is signed in
@@ -78,7 +81,7 @@ public class BaseActivity extends AppCompatActivity {
       public void onClick(View v) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         Toast toast = Toast.makeText(BaseActivity.this, currentUser.getEmail(), Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.TOP | Gravity.RIGHT, 0, 200);
+        toast.setGravity(Gravity.TOP | Gravity.RIGHT, 0, 150);
         toast.show();
       }
     });
@@ -102,7 +105,7 @@ public class BaseActivity extends AppCompatActivity {
     changeToLoginActivity();
   }
 
-  private void changeToMessageActivity(){
+  private void changeToMessageActivity() {
     Intent intent = new Intent(this, MessageActivity.class);
     startActivity(intent);
   }
@@ -115,5 +118,35 @@ public class BaseActivity extends AppCompatActivity {
   private void changeToLoginActivity() {
     Intent intent = new Intent(this, LoginActivity.class);
     startActivity(intent);
+  }
+}
+
+// define class list information data with some enriched data
+class ClassListInformation {
+  String className;
+  String classNumber;
+  Boolean subscription;
+  String status;
+  String classID;
+  BaseActivity activityObject;
+  Integer unreadMessageCount;
+
+  ClassListInformation(BaseActivity activityObject, String classID,
+      String className, String classNum, String requestStatus) {
+    this.className = className;
+    this.classNumber = classNum;
+    this.status = requestStatus;
+    this.classID = classID;
+    this.activityObject = activityObject;
+  }
+
+  public ClassListInformation(BaseActivity activityObject, String classID,
+      String className, String classNum, Integer unReadMessages) {
+
+    this.className = className;
+    this.classNumber = classNum;
+    this.unreadMessageCount = unReadMessages;
+    this.classID = classID;
+    this.activityObject = activityObject;
   }
 }
