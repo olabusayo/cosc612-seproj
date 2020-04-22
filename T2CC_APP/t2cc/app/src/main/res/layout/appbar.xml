@@ -15,7 +15,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.035"
-        app:srcCompat="@drawable/t2cc_logo" />
+        app:srcCompat="@drawable/t2cc_logo_updated" />
+
 
     <ImageView
         android:id="@+id/messagesImage"
@@ -34,7 +35,6 @@
         android:layout_height="30dp"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="9dp"
-        android:layout_marginRight="3dp"
         android:layout_weight="0"
         android:contentDescription="exit Images"
         app:srcCompat="@drawable/ic_exit_to_app_black_24dp" />

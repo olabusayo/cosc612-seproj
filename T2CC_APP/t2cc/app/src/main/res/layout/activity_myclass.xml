@@ -99,7 +99,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0"
             android:gravity="bottom"
-            android:text="Notification OFF/ON"
+            android:text="Unsubscribe"
             android:textStyle="bold" />
 
         <TextView
