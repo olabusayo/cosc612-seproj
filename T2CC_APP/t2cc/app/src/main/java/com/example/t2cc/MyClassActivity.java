@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,10 +13,14 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,8 +115,8 @@ public class MyClassActivity extends BaseActivity implements
                 classInfo.get(mClassesCollectionFieldSection));
             // FIXME logic to get unread messages
             Integer unReadMessages = 3;
-            ClassListInformation cli = new ClassListInformation(classID, className, classNum,
-                unReadMessages);
+            ClassListInformation cli = new ClassListInformation(MyClassActivity.this,
+                classID, className, classNum, unReadMessages);
             myClassesInfoHash.put(classID, cli);
           }
           myClassesInfo.clear();
@@ -136,5 +141,43 @@ public class MyClassActivity extends BaseActivity implements
     return mClassesRef
         .whereIn(FieldPath.documentId(), classIDs)
         .get();
+  }
+
+  void handleUnsubscribeToggle(MyClassActivity mcaObject, String classID) {
+    Log.d(mcaObject.TAG, "handleSubscriptionToggle");
+    mcaObject.unsubscribeFromClass(classID);
+  }
+
+  private void unsubscribeFromClass(final String classID) {
+    Log.d(TAG, "unsubscribeFromClass");
+    final DocumentReference classRosterRef = mClassRosterRef
+        .document(classID);
+    mFBDB.runTransaction(new Transaction.Function<Void>() {
+      @Nullable
+      @Override
+      public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+        DocumentSnapshot rosterClassDoc = transaction.get(classRosterRef);
+        if (rosterClassDoc.exists()) {
+          transaction.update(classRosterRef, mClassRosterCollectionFieldMember,
+              FieldValue.arrayRemove(mCurrentUserID));
+        } else {
+          Log.w(TAG, "Attempted to unsubscribe from class with no roster.");
+        }
+        return null;
+      }
+    }).addOnCompleteListener(new OnCompleteListener<Void>() {
+      @Override
+      public void onComplete(@NonNull Task<Void> task) {
+        if (task.isSuccessful()) {
+          Log.d(TAG, "unsubscribeFromClass:success: " + classID);
+          myClassesInfoHash.remove(classID);
+          myClassesInfo.clear();
+          myClassesInfo.addAll(myClassesInfoHash.values());
+          mAdapter.notifyDataSetChanged();
+        } else {
+          Log.w(TAG, "unsubscribeFromClass:failure: " + classID, task.getException());
+        }
+      }
+    });
   }
 }

@@ -18,12 +18,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class BaseActivity extends AppCompatActivity {
 
-  private String TAG = "T2CC:BaseActivity:";
   FirebaseFirestore mFBDB;
   FirebaseAuth mAuth;
   String mCurrentUserID;
-  private AuthUI mAuthUI;
   FirebaseUser mCurrentUser;
+  private String TAG = "T2CC:BaseActivity:";
+  private AuthUI mAuthUI;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,7 @@ public class BaseActivity extends AppCompatActivity {
       public void onClick(View v) {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         Toast toast = Toast.makeText(BaseActivity.this, currentUser.getEmail(), Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.TOP | Gravity.RIGHT, 0, 200);
+        toast.setGravity(Gravity.TOP | Gravity.RIGHT, 0, 150);
         toast.show();
       }
     });
@@ -105,7 +105,7 @@ public class BaseActivity extends AppCompatActivity {
     changeToLoginActivity();
   }
 
-  private void changeToMessageActivity(){
+  private void changeToMessageActivity() {
     Intent intent = new Intent(this, MessageActivity.class);
     startActivity(intent);
   }
@@ -132,22 +132,21 @@ class ClassListInformation {
   Integer unreadMessageCount;
 
   ClassListInformation(BaseActivity activityObject, String classID,
-      String className, String classNum, Boolean subscriptionStatus,
-      String requestStatus) {
+      String className, String classNum, String requestStatus) {
     this.className = className;
     this.classNumber = classNum;
-    this.subscription = subscriptionStatus;
     this.status = requestStatus;
     this.classID = classID;
     this.activityObject = activityObject;
   }
 
-  public ClassListInformation(String classID,
+  public ClassListInformation(BaseActivity activityObject, String classID,
       String className, String classNum, Integer unReadMessages) {
 
     this.className = className;
     this.classNumber = classNum;
     this.unreadMessageCount = unReadMessages;
     this.classID = classID;
+    this.activityObject = activityObject;
   }
 }

@@ -46,10 +46,7 @@ public class BrowseClassesAdapter extends RecyclerView.Adapter<BrowseClassesView
     holder.classNameRowLabel.setText(mdata.get(position).className);
     holder.statusLabelRow.setText(mdata.get(position).status);
 
-    if (mdata.get(position).subscription) {
-      holder.subscribeSwitchRow.setChecked(true);
-      holder.subscribeSwitchRow.setEnabled(true);
-    } else if (mdata.get(position).status.equals("pending")) {
+    if (mdata.get(position).status.equals("pending")) {
       holder.subscribeSwitchRow.setChecked(true);
       holder.subscribeSwitchRow.setEnabled(false);
     } else {
@@ -62,8 +59,7 @@ public class BrowseClassesAdapter extends RecyclerView.Adapter<BrowseClassesView
       public void onClick(View v) {
         BrowseClassesActivity bcaObject = (BrowseClassesActivity) mdata.get(position).activityObject;
         String classID = mdata.get(position).classID;
-        Boolean isSubscriptionRequest = !mdata.get(position).subscription;
-        bcaObject.handleSubscriptionToggle(bcaObject, classID, isSubscriptionRequest);
+        bcaObject.handleSubscriptionToggle(bcaObject, classID);
       }
     });
 

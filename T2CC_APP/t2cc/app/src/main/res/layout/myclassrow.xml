@@ -25,7 +25,7 @@
         android:text="12345678901234567890123456789012345678901234567890" />
 
     <Switch
-        android:id="@+id/notificationSwitchRow"
+        android:id="@+id/myClassSubscribeSwitchRow"
         android:layout_width="45dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
