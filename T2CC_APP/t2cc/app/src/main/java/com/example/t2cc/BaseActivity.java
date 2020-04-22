@@ -33,7 +33,10 @@ public class BaseActivity extends AppCompatActivity {
     mAuth = FirebaseAuth.getInstance();
     mAuthUI = AuthUI.getInstance();
     mCurrentUser = mAuth.getCurrentUser();
-    mCurrentUserID = mCurrentUser.getUid();
+
+    if(mCurrentUser != null) {
+      mCurrentUserID = mCurrentUser.getUid();
+    }
   }
 
   public void onStart() {//check if user is signed in
