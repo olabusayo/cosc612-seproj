@@ -1,19 +1,14 @@
 package com.example.t2cc;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Switch;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BrowseClassActivity extends AppCompatActivity {
+public class BrowseClassActivity extends BaseActivity {
 
     BrowseClassAdpater adapter;
     RecyclerView recyclerView;
