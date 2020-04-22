@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -31,10 +32,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RegistrationActivity extends AppCompatActivity implements
-    View.OnClickListener {
+    View.OnClickListener, FirestoreConnections.StudentCollectionAccessors {
 
   private final static String TAG = "T2CC:Registration";
-  String mStudentsCollection = "students";
+
   // Firebase Auth
   private FirebaseAuth mAuth;
   private FirebaseFirestore mFBDB;
@@ -50,6 +51,7 @@ public class RegistrationActivity extends AppCompatActivity implements
   //Button
   private Button mRegisterButton;
   private AuthUI mAuthUI;
+  private CollectionReference mStudentsRef;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,8 @@ public class RegistrationActivity extends AppCompatActivity implements
     mAuth = FirebaseAuth.getInstance();
     mAuthUI = AuthUI.getInstance();
     mFBDB = FirebaseFirestore.getInstance();
+    mStudentsRef = mFBDB.collection(mStudentsCollection);
+
     mAuthListener = new FirebaseAuth.AuthStateListener() {
       @Override
       public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -162,18 +166,20 @@ public class RegistrationActivity extends AppCompatActivity implements
       String[] mFullName = user.getDisplayName().split(" ");
       String mFirstName = mFullName[0];
       String mLastName = mFullName[1];
+      String mStudentUid = user.getUid();
 
       Map<String, Object> student = new HashMap<>();
-      student.put("fname", mFirstName);
-      student.put("lname", mLastName);
-      student.put("email", mEmail);
+      student.put(mStudentCollectionFieldFirstName, mFirstName);
+      student.put(mStudentCollectionFieldLastName, mLastName);
+      student.put(mStudentCollectionEmail, mEmail);
 
-      mFBDB.collection(mStudentsCollection)
-          .add(student)
-          .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+      mStudentsRef
+          .document(mStudentUid)
+          .set(student)
+          .addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onSuccess(DocumentReference documentReference) {
-              Log.d(TAG, "studentAdded:" + documentReference.getId());
+            public void onSuccess(Void aVoid) {
+              Log.d(TAG, "studentAdded:success");
               mAuth.removeAuthStateListener(mAuthListener);
             }
           })
