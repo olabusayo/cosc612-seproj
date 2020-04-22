@@ -1,0 +1,16 @@
+{
+  "SIDEBAR": [
+                {
+              		"Main_Moudle_Name" : "My Classes",
+                  "Url": "/",
+                  "Icon":"nav-icon fas fa-list",
+                  "Active":true
+                },
+                {
+              		"Main_Moudle_Name" : "Create a new class",
+                  "Url": "createclass",
+                  "Icon":"nav-icon fas fa-plus",
+                  "Active":true
+            	  }
+	           ]
+}

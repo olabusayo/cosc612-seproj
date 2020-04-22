@@ -1,7 +1,7 @@
 import React from 'react'
 import { AuthProvider } from "./providers/Auth";
 
-import Application from "./functionalComp/Appication"
+import Application from "./components/Appication"
 
 const App = () => {
 
