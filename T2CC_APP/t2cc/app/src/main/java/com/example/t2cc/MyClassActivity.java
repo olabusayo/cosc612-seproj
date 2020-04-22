@@ -14,10 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -164,7 +162,7 @@ public class MyClassActivity extends BaseActivity {
       public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
         DocumentSnapshot rosterClassDoc = transaction.get(classRosterRef);
         if (rosterClassDoc.exists()) {
-          transaction.update(classRosterRef, ClassRosterCollectionAccessors.mClassRosterCollectionFieldMember,
+          transaction.update(classRosterRef, ClassRosterCollectionAccessors.mClassRosterCollectionFieldStudents,
               FieldValue.arrayRemove(mCurrentUserID));
         } else {
           Log.w(TAG, "Attempted to unsubscribe from class with no roster.");

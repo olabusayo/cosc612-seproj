@@ -184,11 +184,12 @@ public class BrowseClassesActivity extends BaseActivity {
         DocumentSnapshot cReqDoc = transaction.get(classRequestRef);
         if (cReqDoc.exists()) {
           transaction.update(classRequestRef,
-              SubscriptionRequestsCollectionAccessors.mSubscriptionRequestsCollectionRequests,
+              SubscriptionRequestsCollectionAccessors.mSubscriptionRequestsCollectionFieldRequests,
               FieldValue.arrayUnion(mCurrentUserID));
         } else {
           Map<String, Object> req = new HashMap<>();
-          req.put(SubscriptionRequestsCollectionAccessors.mSubscriptionRequestsCollectionRequests,
+          req.put(
+              SubscriptionRequestsCollectionAccessors.mSubscriptionRequestsCollectionFieldRequests,
               FieldValue.arrayUnion(mCurrentUserID));
           classRequestRef.set(req);
         }

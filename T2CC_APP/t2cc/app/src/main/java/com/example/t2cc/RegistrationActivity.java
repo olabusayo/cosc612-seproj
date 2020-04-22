@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.t2cc.FirestoreConnections.StudentCollectionAccessors;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -26,7 +27,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.example.t2cc.FirestoreConnections.StudentCollectionAccessors;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -144,7 +144,7 @@ public class RegistrationActivity extends AppCompatActivity implements
                 mPasswordField.requestFocus();
               } catch (FirebaseAuthUserCollisionException | FirebaseAuthInvalidCredentialsException e) {
                 String m = e.getMessage();
-                if( m.contains("email"))  {
+                if (m.contains("email")) {
                   mEmailField.setError(e.getMessage());
                   mEmailField.requestFocus();
                 } else {
@@ -152,7 +152,8 @@ public class RegistrationActivity extends AppCompatActivity implements
                   mPasswordField.requestFocus();
                 }
               } catch (Exception e) {
-                Toast.makeText(RegistrationActivity.this, "Registration failed.\n" + genException.getMessage(),
+                Toast.makeText(RegistrationActivity.this,
+                    "Registration failed.\n" + genException.getMessage(),
                     Toast.LENGTH_LONG).show();
               }
             }
@@ -168,14 +169,14 @@ public class RegistrationActivity extends AppCompatActivity implements
       String mLastName = mFullName[1];
       String mStudentUid = user.getUid();
 
-      Map<String, Object> student = new HashMap<>();
-      student.put(StudentCollectionAccessors.mStudentCollectionFieldFirstName, mFirstName);
-      student.put(StudentCollectionAccessors.mStudentCollectionFieldLastName, mLastName);
-      student.put(StudentCollectionAccessors.mStudentCollectionFieldEmail, mEmail);
+      Map<String, Object> studentData = new HashMap<>();
+      studentData.put(StudentCollectionAccessors.mStudentCollectionFieldFirstName, mFirstName);
+      studentData.put(StudentCollectionAccessors.mStudentCollectionFieldLastName, mLastName);
+      studentData.put(StudentCollectionAccessors.mStudentCollectionFieldEmail, mEmail);
 
       mStudentsRef
           .document(mStudentUid)
-          .set(student)
+          .set(studentData)
           .addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -200,11 +201,11 @@ public class RegistrationActivity extends AppCompatActivity implements
       mFirstNameField.setError("Required.");
       mFirstNameField.requestFocus();
       valid = false;
-    } else if (containNumber(firstName)){
+    } else if (containNumber(firstName)) {
       mFirstNameField.setError("First name cannot have numbers");
       mFirstNameField.requestFocus();
       valid = false;
-    } else if(containSpecialChar(firstName)) {
+    } else if (containSpecialChar(firstName)) {
       mFirstNameField.setError("First name cannot have special characters");
       mFirstNameField.requestFocus();
       valid = false;
@@ -217,11 +218,11 @@ public class RegistrationActivity extends AppCompatActivity implements
       mLastNameField.setError("Required.");
       mLastNameField.requestFocus();
       valid = false;
-    } else if (containNumber(lastName)){
+    } else if (containNumber(lastName)) {
       mLastNameField.setError("Last name cannot have numbers");
       mLastNameField.requestFocus();
       valid = false;
-    } else if(containSpecialChar(lastName)) {
+    } else if (containSpecialChar(lastName)) {
       mLastNameField.setError("Last name cannot have special characters");
       mLastNameField.requestFocus();
       valid = false;
@@ -247,28 +248,23 @@ public class RegistrationActivity extends AppCompatActivity implements
       mPasswordField.setError("Password must contain at least 10 characters");
       mPasswordField.requestFocus();
       valid = false;
-    }
-    else if (!containNumber(password)){
+    } else if (!containNumber(password)) {
       mPasswordField.setError("Password must contain at least 1 number");
       mPasswordField.requestFocus();
       valid = false;
-    }
-    else if (!containLowerCase(password)){
+    } else if (!containLowerCase(password)) {
       mPasswordField.setError("Password must contain at least 1 lowercase");
       mPasswordField.requestFocus();
       valid = false;
-    }
-    else if (!containUpperCase(password)){
+    } else if (!containUpperCase(password)) {
       mPasswordField.setError("Password must contain at least 1 uppercase");
       mPasswordField.requestFocus();
       valid = false;
-    }
-    else if(!containSpecialChar(password)){
+    } else if (!containSpecialChar(password)) {
       mPasswordField.setError("Password must contain at least 1 special character (!@#$%^&*())");
       mPasswordField.requestFocus();
       valid = false;
-    }
-    else {
+    } else {
       mPasswordField.setError(null);
     }
 
@@ -288,14 +284,14 @@ public class RegistrationActivity extends AppCompatActivity implements
     return valid;
   }
 
-  private boolean containLowerCase(String string){
+  private boolean containLowerCase(String string) {
     boolean valid = false;
     char ch;
 
-    for(int i=0; i < string.length(); i++) {
+    for (int i = 0; i < string.length(); i++) {
       ch = string.charAt(i);
 
-      if(Character.isLowerCase(ch)) {
+      if (Character.isLowerCase(ch)) {
         valid = true;
         break;
       }
@@ -303,14 +299,14 @@ public class RegistrationActivity extends AppCompatActivity implements
     return valid;
   }
 
-  private boolean containUpperCase(String string){
+  private boolean containUpperCase(String string) {
     boolean valid = false;
     char ch;
 
-    for(int i=0; i < string.length(); i++) {
+    for (int i = 0; i < string.length(); i++) {
       ch = string.charAt(i);
 
-      if(Character.isUpperCase(ch)) {
+      if (Character.isUpperCase(ch)) {
         valid = true;
         break;
       }
@@ -318,11 +314,11 @@ public class RegistrationActivity extends AppCompatActivity implements
     return valid;
   }
 
-  private boolean containNumber(String string){
+  private boolean containNumber(String string) {
     boolean valid = false;
     char ch;
 
-    for(int i=0; i < string.length(); i++) {
+    for (int i = 0; i < string.length(); i++) {
       ch = string.charAt(i);
 
       if (Character.isDigit(ch)) {
@@ -334,13 +330,13 @@ public class RegistrationActivity extends AppCompatActivity implements
     return valid;
   }
 
-  private boolean containSpecialChar(String string){
+  private boolean containSpecialChar(String string) {
     boolean valid = false;
     String specialChars = "!@#$%^&*()";
 
-    for(int i=0; i < string.length(); i++) {
+    for (int i = 0; i < string.length(); i++) {
 
-      if (specialChars.contains(Character.toString(string.charAt(i)))){
+      if (specialChars.contains(Character.toString(string.charAt(i)))) {
         valid = true;
         break;
       }
