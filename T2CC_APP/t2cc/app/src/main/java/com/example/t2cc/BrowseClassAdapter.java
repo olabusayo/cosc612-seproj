@@ -11,15 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class BrowseClassAdpater extends RecyclerView.Adapter<BrowseClassViewHolder> {
+public class BrowseClassAdapter extends RecyclerView.Adapter<BrowseClassViewHolder> {
     // for debugging
-    private static final String TAG = "RecyclerViewAdpater";
+    private static final String TAG = "BrowseClassAdapter: ";
 
     private List<classData> mdata;
     private Context mcontext;
 
     // constructor
-    public BrowseClassAdpater(List<classData> data, Context context){
+    public BrowseClassAdapter(List<classData> data, Context context){
         mdata = data;
         mcontext = context;
     }

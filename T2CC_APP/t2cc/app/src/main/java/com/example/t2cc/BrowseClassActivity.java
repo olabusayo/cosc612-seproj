@@ -10,7 +10,7 @@ import java.util.List;
 
 public class BrowseClassActivity extends BaseActivity {
 
-    BrowseClassAdpater adapter;
+    BrowseClassAdapter adapter;
     RecyclerView recyclerView;
 
     @Override
@@ -27,7 +27,7 @@ public class BrowseClassActivity extends BaseActivity {
         list.add(new classData("cosc602-01", "1234567890", "subscribe", "pending"));
         // get recycle view
         recyclerView = (RecyclerView)findViewById(R.id.subscribe2ClassRecycleView);
-        adapter = new BrowseClassAdpater(list, getApplication());
+        adapter = new BrowseClassAdapter(list, getApplication());
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(BrowseClassActivity.this));

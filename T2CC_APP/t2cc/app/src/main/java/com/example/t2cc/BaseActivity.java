@@ -65,11 +65,22 @@ public class BaseActivity extends AppCompatActivity{
                 changeToHomeActivity();
             }
         });
+
+        findViewById(R.id.messagesImage).setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                changeToMessageActivity();
+            }
+        });
     }
 
     private void logOut() {
         mAuthUI.signOut(getApplicationContext());
         changeToLoginActivity();
+    }
+
+    private void changeToMessageActivity(){
+        Intent intent = new Intent(this, MessageActivity.class);
+        startActivity(intent);
     }
 
     private void changeToHomeActivity(){

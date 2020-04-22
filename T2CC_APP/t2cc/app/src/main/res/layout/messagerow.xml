@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="22dp"
+            android:background="@drawable/messagerow"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/messageNumberLabel"
+                android:layout_width="92dp"
+                android:layout_height="20dp"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="0"
+                android:text="Message #1"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/classNumberLabel"
+                android:layout_width="92dp"
+                android:layout_height="20dp"
+                android:layout_gravity="bottom"
+                android:layout_marginRight="143dp"
+                android:layout_weight="0"
+                android:text="COSC609-01"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/dateLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_gravity="bottom"
+                android:layout_marginRight="1dp"
+                android:layout_weight="0"
+                android:text="April 4"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/deleteImage"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="bottom"
+                android:layout_weight="0"
+                app:srcCompat="@drawable/ic_delete_forever_black_24dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/messageTextField"
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This is Message From Professor To Class" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
