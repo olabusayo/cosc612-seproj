@@ -3,14 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    app:contentInsetStart="0dp"
+    app:contentInsetLeft="0dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorAccent">
 
+
     <ImageView
         android:id="@+id/homeLogo"
-        android:layout_width="75dp"
+        android:layout_marginLeft="5dp"
+        android:layout_width="48dp"
         android:layout_height="50dp"
-        android:layout_marginRight="140dp"
+        android:layout_marginRight="215dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,18 +24,17 @@
 
     <ImageView
         android:id="@+id/messagesImage"
-        android:layout_width="55dp"
+        android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="9dp"
-        android:layout_marginRight="5dp"
         android:layout_weight="0"
         android:contentDescription="@string/messages_image"
         app:srcCompat="@drawable/ic_mail_black_24dp" />
 
     <ImageView
         android:id="@+id/logoutImage"
-        android:layout_width="55dp"
+        android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="9dp"
@@ -41,13 +44,14 @@
 
     <TextView
         android:id="@+id/userInitial"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_width="65dp"
+        android:layout_height="30dp"
+        android:gravity="center_horizontal|left"
         android:layout_weight="0"
-        android:text="I.N."
+        android:text="W.W."
         android:textColor="#000000"
-        android:textSize="29dp"
+        android:layout_marginBottom="16dp"
+        android:textSize="27dp"
         android:textStyle="bold" />
 
 

@@ -2,6 +2,7 @@ package com.example.t2cc;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -56,6 +57,11 @@ public class LoginActivity extends AppCompatActivity implements
   @Override
   public void onStart() {//check if user is signed in
     super.onStart();
+  }
+
+  @Override
+  public void onBackPressed() {
+    finishAffinity();
   }
 
   @Override
