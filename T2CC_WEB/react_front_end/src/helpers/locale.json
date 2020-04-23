@@ -1,0 +1,14 @@
+{
+  "save"                        : "Create",
+  "question"                    : "Question",
+  "answer"                      : "Answer",
+  "status"                      : "Status",
+  "addfaq"                      : "Add Faq",
+  "classtitle"                  : "Class Title",
+  "courseno"                    : "Course Number",
+  "createanewclass"             : "create a new class",
+  "classdesc"                   : "Class Description",
+  "section"                     : "Section",
+  "term"                        : "Term",
+  "year"                        : "Year"
+}
