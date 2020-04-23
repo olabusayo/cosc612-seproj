@@ -24,7 +24,7 @@ public class MessageActivity extends BaseActivity {
         list.add(new messageData("message #1", "COSC602-02", "April 10",
                 "This is an example message from professor 1"));
 
-        list.add(new messageData("message #2", "COSC602-01", "April 11",
+        list.add(new messageData("message #2", "COSC602-01", "November 20",
                 "This is an example message from professor 2"));
 
         // get recycle view

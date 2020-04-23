@@ -8,28 +8,12 @@
 
 
     <TextView
-        android:id="@+id/title"
-        android:layout_width="390dp"
-        android:layout_height="34dp"
-        android:layout_marginBottom="34dp"
-        android:gravity="center"
-        android:text="T2CC"
-        android:textColor="@android:color/black"
-        android:textSize="25dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.761"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.067" />
-
-    <TextView
         android:id="@+id/registrationLabel"
         android:layout_width="132dp"
         android:layout_height="33dp"
         android:layout_marginTop="104dp"
         android:text="Registration"
+        android:textColor="#03A9F4"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/firstNameRegLabel"
         app:layout_constraintEnd_toEndOf="parent"
@@ -205,5 +189,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/confirmPasswordRegField"
         app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="85dp"
+        android:layout_height="90dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.006"
+        app:srcCompat="@drawable/t2cc_logo_updated" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

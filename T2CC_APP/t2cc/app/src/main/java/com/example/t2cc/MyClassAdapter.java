@@ -1,6 +1,7 @@
 package com.example.t2cc;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,7 +47,6 @@ public class MyClassAdapter extends RecyclerView.Adapter<MyClassViewHolder> {
     holder.myClassNumberLabel.setText(mdata.get(position).classNumber);
     holder.myClassNameLabel.setText(mdata.get(position).className);
     holder.myClassSubscribeSwitchRow.setChecked(true);
-    holder.myClassUnReadMsgLabel.setText((mdata.get(position).unreadMessageCount).toString());
 
     holder.myClassSubscribeSwitchRow.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -57,6 +57,18 @@ public class MyClassAdapter extends RecyclerView.Adapter<MyClassViewHolder> {
       }
     });
 
+    holder.myClassMessageImage.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        changeToMessageActivity();
+      }
+    });
+  }
+
+  private void changeToMessageActivity() {
+      Intent intent = new Intent(mcontext, MessageActivity.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      mcontext.startActivity(intent);
   }
 
   @Override

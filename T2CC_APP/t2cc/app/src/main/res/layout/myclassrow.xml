@@ -32,13 +32,13 @@
         android:layout_marginLeft="17.5dp"
         android:layout_marginRight="17.5dp"/>
 
-    <TextView
-        android:id="@+id/unreadMessageRowLabel"
-        android:layout_width="60dp"
-        android:layout_height="20dp"
+    <ImageView
+        android:id="@+id/myClassMessageImage"
+        android:layout_width="45dp"
         android:layout_gravity="center_vertical"
-        android:gravity="center_horizontal"
-        android:text="1"
-        android:textColor="#F44336" />
+        android:layout_height="25dp"
+        android:layout_weight="0"
+        app:srcCompat="@drawable/ic_mail_black_24dp" />
+
 </LinearLayout>
 
