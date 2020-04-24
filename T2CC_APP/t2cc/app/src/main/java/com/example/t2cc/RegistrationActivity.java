@@ -205,7 +205,7 @@ public class RegistrationActivity extends AppCompatActivity implements
       mFirstNameField.requestFocus();
       valid = false;
     } else if(containSpecialChar(firstName)) {
-      mFirstNameField.setError("First Name cannot have special characters");
+      mFirstNameField.setError("First name cannot have special characters");
       mFirstNameField.requestFocus();
       valid = false;
     } else {
@@ -222,7 +222,7 @@ public class RegistrationActivity extends AppCompatActivity implements
       mLastNameField.requestFocus();
       valid = false;
     } else if(containSpecialChar(lastName)) {
-      mLastNameField.setError("Last Name cannot have special characters");
+      mLastNameField.setError("Last name cannot have special characters");
       mLastNameField.requestFocus();
       valid = false;
     } else {
@@ -254,17 +254,17 @@ public class RegistrationActivity extends AppCompatActivity implements
       valid = false;
     }
     else if (!containLowerCase(password)){
-      mPasswordField.setError("Password must contain at least 1 lower case");
+      mPasswordField.setError("Password must contain at least 1 lowercase");
       mPasswordField.requestFocus();
       valid = false;
     }
     else if (!containUpperCase(password)){
-      mPasswordField.setError("Password need to contain 1 Upper case");
+      mPasswordField.setError("Password must contain at least 1 uppercase");
       mPasswordField.requestFocus();
       valid = false;
     }
     else if(!containSpecialChar(password)){
-      mPasswordField.setError("Password need to contain 1 special characters (!@#$%^&*())");
+      mPasswordField.setError("Password must contain at least 1 special character (!@#$%^&*())");
       mPasswordField.requestFocus();
       valid = false;
     }
