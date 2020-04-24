@@ -60,13 +60,17 @@ public class MyClassAdapter extends RecyclerView.Adapter<MyClassViewHolder> {
     holder.myClassMessageImage.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        changeToMessageActivity();
+        String classID = mdata.get(position).classID;
+        String className = mdata.get(position).className;
+        changeToMessageActivity(classID, className);
       }
     });
   }
 
-  private void changeToMessageActivity() {
+  private void changeToMessageActivity(String classID, String className) {
       Intent intent = new Intent(mcontext, MessageActivity.class);
+      intent.putExtra("CLASS_ID", classID);
+      intent.putExtra("CLASS_NAME", className);
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       mcontext.startActivity(intent);
   }

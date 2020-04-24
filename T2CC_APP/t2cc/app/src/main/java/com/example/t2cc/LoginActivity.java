@@ -2,7 +2,6 @@ package com.example.t2cc;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -125,7 +124,8 @@ public class LoginActivity extends AppCompatActivity implements
                   mPasswordField.requestFocus();
                 }
               } catch (Exception e) {
-                Toast.makeText(LoginActivity.this, "Authentication failed.\n" + genException.getMessage(),
+                Toast.makeText(LoginActivity.this,
+                    "Authentication failed.\n" + genException.getMessage(),
                     Toast.LENGTH_LONG).show();
               }
               updateUI(null);
