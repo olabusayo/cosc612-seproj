@@ -21,11 +21,14 @@ public class MessageActivity extends BaseActivity {
 
         // set data
         List<messageData> list = new ArrayList<>();
-        list.add(new messageData("message #1", "COSC602-02", "April 10",
+        list.add(new messageData("12345678901234567890123456789012345678901234567890", "November 22",
                 "This is an example message from professor 1"));
 
-        list.add(new messageData("message #2", "COSC602-01", "November 20",
-                "This is an example message from professor 2"));
+        list.add(new messageData("1234567890123456789012345678901234567890", "September 22",
+                "This is an example message from professor 2"));;
+
+        list.add(new messageData("12345678901234567890", "September 29",
+                "This is an example message from professor 3"));;
 
         // get recycle view
         recyclerView = (RecyclerView)findViewById(R.id.messageRecycleView);
@@ -38,14 +41,12 @@ public class MessageActivity extends BaseActivity {
 
 // define data
 class messageData{
-    String messageNumberLabel;
-    String classNumberLabel;
+    String classNameLabel;
     String dateLabel;
     String messageTextField;
 
-    messageData(String messageNumberLabel, String classNumberLabel, String dateLabel, String messageTextField){
-        this.messageNumberLabel = messageNumberLabel;
-        this.classNumberLabel = classNumberLabel;
+    messageData(String classNameLabel, String dateLabel, String messageTextField){
+        this.classNameLabel = classNameLabel;
         this.dateLabel = dateLabel;
         this.messageTextField = messageTextField;
     }

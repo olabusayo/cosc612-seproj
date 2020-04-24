@@ -14,7 +14,7 @@
         android:layout_marginLeft="5dp"
         android:layout_width="48dp"
         android:layout_height="50dp"
-        android:layout_marginRight="215dp"
+        android:layout_marginRight="110dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -27,7 +27,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginEnd="9dp"
+        android:layout_marginEnd="60dp"
         android:layout_weight="0"
         android:contentDescription="@string/messages_image"
         app:srcCompat="@drawable/ic_mail_black_24dp" />
@@ -37,7 +37,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginEnd="9dp"
+        android:layout_marginEnd="60dp"
         android:layout_weight="0"
         android:contentDescription="exit Images"
         app:srcCompat="@drawable/ic_exit_to_app_black_24dp" />
