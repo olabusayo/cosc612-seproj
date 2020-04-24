@@ -244,17 +244,17 @@ public class RegistrationActivity extends AppCompatActivity implements
       mPasswordField.requestFocus();
       valid = false;
     } else if (password.length() < 10) {
-      mPasswordField.setError("Password needs to be at least 10 char. ");
+      mPasswordField.setError("Password must contain at least 10 characters");
       mPasswordField.requestFocus();
       valid = false;
     }
     else if (!containNumber(password)){
-      mPasswordField.setError("Password need to contain 1 number");
+      mPasswordField.setError("Password must contain at least 1 number");
       mPasswordField.requestFocus();
       valid = false;
     }
     else if (!containLowerCase(password)){
-      mPasswordField.setError("Password need to contain 1 lower case");
+      mPasswordField.setError("Password must contain at least 1 lower case");
       mPasswordField.requestFocus();
       valid = false;
     }
@@ -297,6 +297,7 @@ public class RegistrationActivity extends AppCompatActivity implements
 
       if(Character.isLowerCase(ch)) {
         valid = true;
+        break;
       }
     }
     return valid;
@@ -311,6 +312,7 @@ public class RegistrationActivity extends AppCompatActivity implements
 
       if(Character.isUpperCase(ch)) {
         valid = true;
+        break;
       }
     }
     return valid;
@@ -325,6 +327,7 @@ public class RegistrationActivity extends AppCompatActivity implements
 
       if (Character.isDigit(ch)) {
         valid = true;
+        break;
       }
     }
 
@@ -333,14 +336,13 @@ public class RegistrationActivity extends AppCompatActivity implements
 
   private boolean containSpecialChar(String string){
     boolean valid = false;
-    char ch;
+    String specialChars = "!@#$%^&*()";
 
     for(int i=0; i < string.length(); i++) {
-      ch = string.charAt(i);
-      String specialChars = "!@#$%^&*()";
 
       if (specialChars.contains(Character.toString(string.charAt(i)))){
         valid = true;
+        break;
       }
     }
 

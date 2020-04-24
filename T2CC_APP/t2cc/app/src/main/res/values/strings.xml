@@ -3,4 +3,6 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="user_images">user images</string>
     <string name="messages_image">messages image</string>
+    <string name="password_info"> Password must be at least 10 characters and contains at least 1 uppercase, 1 lowercase, 1 number, and
+    1 special character ( !, @, #, $, %, ^, &amp;, *, (, ) )</string>
 </resources>
