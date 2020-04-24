@@ -15,11 +15,6 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
     TextView dateLabel;
     TextView messageTextField;
 
-    ImageView bellImage;
-    ImageView deleteImage;
-    Switch switchImage;
-
-
     public MessageViewHolder(@NonNull View itemView) {
         super(itemView);
 
@@ -27,8 +22,5 @@ public class MessageViewHolder extends RecyclerView.ViewHolder {
         classNumberLabel = (TextView)itemView.findViewById(R.id.classNumberLabel);
         dateLabel = (TextView)itemView.findViewById(R.id.dateLabel);
         messageTextField = (TextView)itemView.findViewById(R.id.messageTextField);
-
-        deleteImage = (ImageView)itemView.findViewById(R.id.deleteImage);
-
     }
 }

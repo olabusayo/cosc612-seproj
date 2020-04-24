@@ -101,15 +101,6 @@
             android:gravity="bottom"
             android:text="Unsubscribe"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/statusLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_weight="0"
-            android:text="Unread"
-            android:textStyle="bold" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
