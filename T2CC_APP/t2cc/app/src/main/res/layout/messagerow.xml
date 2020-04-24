@@ -13,50 +13,39 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="22dp"
+            android:layout_height="44dp"
             android:background="@drawable/messagerow"
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/messageNumberLabel"
-                android:layout_width="92dp"
-                android:layout_height="20dp"
-                android:layout_gravity="bottom"
-                android:layout_marginLeft="10dp"
+                android:id="@+id/classNameLabel"
+                android:layout_width="310dp"
+                android:layout_height="44dp"
                 android:layout_weight="0"
-                android:text="Message #1"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/classNumberLabel"
-                android:layout_width="92dp"
-                android:layout_height="20dp"
-                android:layout_gravity="bottom"
-                android:layout_marginRight="122dp"
-                android:layout_weight="0"
-                android:text="COSC609-01"
+                android:layout_gravity="center_vertical"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="01234567890123456789012345678901234567890"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/dateLabel"
                 android:layout_width="90dp"
-                android:layout_height="20dp"
-                android:layout_gravity="bottom"
-                android:gravity="right"
-                android:layout_marginRight="1dp"
-                android:paddingRight="2dp"
+                android:layout_height="44dp"
+                android:layout_marginRight="3dp"
                 android:layout_weight="0"
+                android:gravity="right|center_vertical"
                 android:text="November 20"
                 android:textStyle="bold" />
-
 
         </LinearLayout>
 
         <TextView
             android:id="@+id/messageTextField"
-            android:layout_marginLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:text="This is Message From Professor To Class" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -42,8 +42,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
         Log.d(TAG, "BindViewHolder: called.");
 
         // set the information
-        holder.messageNumberLabel.setText(mdata.get(position).messageNumberLabel);
-        holder.classNumberLabel.setText(mdata.get(position).classNumberLabel);
+        holder.classNameLabel.setText(mdata.get(position).classNameLabel);
         holder.dateLabel.setText(mdata.get(position).dateLabel);
         holder.messageTextField.setText(mdata.get(position).messageTextField);
 
