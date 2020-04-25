@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +41,8 @@ public class BrowseClassesActivity extends BaseActivity {
   private BrowseClassesAdapter mAdapter;
   private RecyclerView mRecyclerView;
   private ProgressBar mProgressBar;
+  private TextView mEmptyText;
+
   // Calendar
   private Calendar mCal;
   private Integer currentYear;
@@ -52,8 +55,10 @@ public class BrowseClassesActivity extends BaseActivity {
 
     // get recycle view
     mProgressBar = findViewById(R.id.browseClassProgressBar);
+    mEmptyText = findViewById(R.id.browseClassEmptyText);
     mRecyclerView = findViewById(R.id.subscribe2ClassRecycleView);
     mRecyclerView.setVisibility(View.GONE);
+    mEmptyText.setVisibility(View.GONE);
 
     findViewById(R.id.subscribe2ClassSubBodyLabel).setOnClickListener(
         new View.OnClickListener() {
@@ -69,8 +74,6 @@ public class BrowseClassesActivity extends BaseActivity {
 
     availableClassesInfoHash = new HashMap<>();
     availableClassesInfo = new ArrayList<>();
-    // get recycle view
-    mRecyclerView = findViewById(R.id.subscribe2ClassRecycleView);
 
     populateAvailableClassesViewData().addOnCompleteListener(
         new OnCompleteListener<List<Object>>() {
@@ -81,9 +84,14 @@ public class BrowseClassesActivity extends BaseActivity {
               setupBrowseClassesAdapter(availableClassesInfo);
               mProgressBar.setVisibility(View.GONE);
               mRecyclerView.setVisibility(View.VISIBLE);
+              if(mAdapter.getItemCount() == 0){
+                mEmptyText.setVisibility(View.VISIBLE);
+              }
 
             } else {
               Log.w(TAG, "setUpAdapterOnCreate:failure");
+              mProgressBar.setVisibility(View.GONE);
+              mEmptyText.setVisibility(View.VISIBLE);
             }
           }
         });

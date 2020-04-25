@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MyClassActivity">
 
-
     <include
         android:id="@+id/appBar"
         layout="@layout/appbar" />
@@ -86,12 +85,21 @@
 
         <TextView
             android:id="@+id/classNameLabel"
-            android:layout_width="180dp"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_weight="0"
             android:text="Class Name"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/myClassTeacherEmailLabel"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:layout_gravity="bottom"
+            android:textStyle="bold"
+            android:text="Email" />
 
         <TextView
             android:id="@+id/subUnsubLabel"
@@ -110,8 +118,10 @@
         android:background="@drawable/shape"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/myClassHeaderView" />
+        app:layout_constraintTop_toBottomOf="@id/myClassHeaderView"
+        app:layout_constraintVertical_bias="1.0" />
 
     <ProgressBar
         android:id="@+id/myClassProgressBar"
@@ -128,11 +138,12 @@
         android:id="@+id/myClassEmpty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="470dp"
         android:text="No Available Class"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.285" />
+        app:layout_constraintTop_toBottomOf="@+id/myClassHeaderView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

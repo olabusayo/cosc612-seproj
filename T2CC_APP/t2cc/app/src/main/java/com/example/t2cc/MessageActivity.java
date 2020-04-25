@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.View;
 import android.widget.ProgressBar;
@@ -31,6 +32,7 @@ import static com.example.t2cc.FirestoreConnections.MessagesCollectionAccessors;
 
 public class MessageActivity extends BaseActivity {
   final static String TAG = "T2CC:MessagesActivity";
+  Intent singleClassMessages;
   MessageAdapter mAdapter;
   RecyclerView mRecyclerView;
   SimpleDateFormat messageDateFormat;
@@ -39,6 +41,7 @@ public class MessageActivity extends BaseActivity {
 
   ProgressBar mProgressBar;
   TextView mEmptyText;
+  SwipeRefreshLayout mSwipeLayout;
 
   static void handleSpecificClassMessageClick(MessageActivity mcaObject, String classID,
       String className) {
@@ -64,37 +67,70 @@ public class MessageActivity extends BaseActivity {
     mEmptyText.setVisibility(View.GONE);
     mRecyclerView.setVisibility(View.GONE);
 
+    populateRecyclerView();
 
-    Intent singleClassMessages = getIntent();
+    // refresh layout
+    mSwipeLayout = findViewById(R.id.swipeRefreshMessage);
+    mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+      @Override
+      public void onRefresh() {
+        messagesInfoHash.clear();
+        messagesInfo.clear();
+        mSwipeLayout.setRefreshing(false);
+
+        populateRecyclerView();
+//        finish();
+//        startActivity(getIntent());
+      }
+    });
+
+  }
+
+  private void populateRecyclerView(){
+    singleClassMessages = getIntent();
     if (singleClassMessages.hasExtra("CLASS_ID") && singleClassMessages.hasExtra("CLASS_NAME")) {
       //check if this is from my classes view message click
       String classID = singleClassMessages.getStringExtra("CLASS_ID");
       String className = singleClassMessages.getStringExtra("CLASS_NAME");
       populateMessagesForIndividualClass(classID, className).addOnCompleteListener(
-          new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-              if (task.isSuccessful()) {
-                Log.d(TAG, "setUpAdapterOnCreate:success");
-                setupMessagesAdapter(messagesInfo);
-              } else {
-                Log.w(TAG, "setUpAdapterOnCreate:failure");
-              }
-            }
-          });
+              new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                  if (task.isSuccessful()) {
+                    Log.d(TAG, "setUpAdapterOnCreate:success");
+                    setupMessagesAdapter(messagesInfo);
+                    mProgressBar.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    if(mAdapter.getItemCount() == 0){
+                      mEmptyText.setVisibility(View.VISIBLE);
+                    }
+                  } else {
+                    Log.w(TAG, "setUpAdapterOnCreate:failure");
+                    mProgressBar.setVisibility(View.GONE);
+                    mEmptyText.setVisibility(View.VISIBLE);
+                  }
+                }
+              });
     } else {
       populateMessagesViewData().addOnCompleteListener(
-          new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-              if (task.isSuccessful()) {
-                Log.d(TAG, "setUpAdapterOnCreate:success");
-                setupMessagesAdapter(messagesInfo);
-              } else {
-                Log.w(TAG, "setUpAdapterOnCreate:failure");
-              }
-            }
-          });
+              new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                  if (task.isSuccessful()) {
+                    Log.d(TAG, "setUpAdapterOnCreate:success");
+                    setupMessagesAdapter(messagesInfo);
+                    mProgressBar.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    if(mAdapter.getItemCount() == 0){
+                      mEmptyText.setVisibility(View.VISIBLE);
+                    }
+                  } else {
+                    Log.w(TAG, "setUpAdapterOnCreate:failure");
+                    mProgressBar.setVisibility(View.GONE);
+                    mEmptyText.setVisibility(View.VISIBLE);
+                  }
+                }
+              });
     }
   }
 

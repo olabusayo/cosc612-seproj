@@ -76,13 +76,14 @@ public class MyClassActivity extends BaseActivity {
               Log.d(TAG, "setUpAdapterOnCreate:success");
               setupMyClassesAdapter(myClassesInfo);
               mProgressBar.setVisibility(View.GONE);
-
+              mRecyclerView.setVisibility(View.VISIBLE);
               if(mAdapter.getItemCount() == 0){
                 emptyClass.setVisibility(View.VISIBLE);
               }
-              mRecyclerView.setVisibility(View.VISIBLE);
             } else {
               Log.w(TAG, "setUpAdapterOnCreate:failure");
+              mProgressBar.setVisibility(View.GONE);
+              emptyClass.setVisibility(View.VISIBLE);
             }
           }
         });
@@ -132,6 +133,8 @@ public class MyClassActivity extends BaseActivity {
             ClassListInformation cli = new ClassListInformation(MyClassActivity.this,
                 classID, className, classNum);
             myClassesInfoHash.put(classID, cli);
+
+
           }
           myClassesInfo.clear();
           myClassesInfo.addAll(myClassesInfoHash.values());
