@@ -5,6 +5,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +16,20 @@ public class MessageActivity extends BaseActivity {
 
     MessageAdapter adapter;
     RecyclerView recyclerView;
+    ProgressBar mProgressBar;
+    TextView emptyText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+
+        //Set Visibibilty
+        emptyText = findViewById(R.id.messageEmptyText);
+        mProgressBar = findViewById(R.id.messageProgressBar);
+        recyclerView = findViewById(R.id.messageRecycleView);
+        emptyText.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
 
         // set data
         List<messageData> list = new ArrayList<>();
@@ -31,11 +43,16 @@ public class MessageActivity extends BaseActivity {
                 "This is an example message from professor 3"));;
 
         // get recycle view
-        recyclerView = (RecyclerView)findViewById(R.id.messageRecycleView);
         adapter = new MessageAdapter(list, getApplication());
-
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(MessageActivity.this));
+
+        //When finish reset visibility
+        mProgressBar.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        if (adapter.getItemCount() == 0){
+            emptyText.setVisibility(View.VISIBLE);
+        }
     }
 }
 

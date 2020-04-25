@@ -3,6 +3,7 @@ package com.example.t2cc;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,6 +40,7 @@ public class BrowseClassesActivity extends BaseActivity implements
   private Map<String, ClassListInformation> availableClassesInfoHash;
   private BrowseClassesAdapter mAdapter;
   private RecyclerView mRecyclerView;
+  private ProgressBar mProgressBar;
   // firebase
   private CollectionReference mClassesRef;
   private CollectionReference mClassRosterRef;
@@ -54,6 +56,11 @@ public class BrowseClassesActivity extends BaseActivity implements
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_browseclass);
+
+    // get recycle view
+    mProgressBar = findViewById(R.id.browseClassProgressBar);
+    mRecyclerView = findViewById(R.id.subscribe2ClassRecycleView);
+    mRecyclerView.setVisibility(View.GONE);
 
     //Calendar
     mCal = Calendar.getInstance();
@@ -84,14 +91,15 @@ public class BrowseClassesActivity extends BaseActivity implements
             if (task.isSuccessful()) {
               Log.d(TAG, "setUpAdapterOnCreate:success");
               setupBrowseClassesAdapter(availableClassesInfo);
+              mProgressBar.setVisibility(View.GONE);
+              mRecyclerView.setVisibility(View.VISIBLE);
+
             } else {
               Log.w(TAG, "setUpAdapterOnCreate:failure");
             }
           }
         });
 
-    // get recycle view
-    mRecyclerView = findViewById(R.id.subscribe2ClassRecycleView);
   }
 
   private void setupBrowseClassesAdapter(List<ClassListInformation> availableClassesInfo) {

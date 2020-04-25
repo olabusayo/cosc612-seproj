@@ -3,6 +3,8 @@ package com.example.t2cc;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +38,9 @@ public class MyClassActivity extends BaseActivity implements
   final static String TAG = "T2CC:MyClasses";
   MyClassAdapter mAdapter;
   RecyclerView mRecyclerView;
+  ProgressBar mProgressBar;
+  TextView emptyClass;
+
   private List<ClassListInformation> myClassesInfo;
   private Map<String, ClassListInformation> myClassesInfoHash;
   private CollectionReference mClassRosterRef;
@@ -45,6 +50,13 @@ public class MyClassActivity extends BaseActivity implements
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_myclass);
+
+    // get recycle view
+    mRecyclerView = findViewById(R.id.myClassRecycleView);
+    emptyClass = findViewById(R.id.myClassEmpty);
+    mProgressBar = findViewById(R.id.myClassProgressBar);
+    mRecyclerView.setVisibility(View.GONE);
+    emptyClass.setVisibility(View.GONE);
 
     myClassesInfoHash = new HashMap<>();
     myClassesInfo = new ArrayList<>();
@@ -65,14 +77,18 @@ public class MyClassActivity extends BaseActivity implements
             if (task.isSuccessful()) {
               Log.d(TAG, "setUpAdapterOnCreate:success");
               setupMyClassesAdapter(myClassesInfo);
+              mProgressBar.setVisibility(View.GONE);
+
+              if(mAdapter.getItemCount() == 0){
+                emptyClass.setVisibility(View.VISIBLE);
+              }
+              mRecyclerView.setVisibility(View.VISIBLE);
             } else {
               Log.w(TAG, "setUpAdapterOnCreate:failure");
             }
           }
         });
 
-    // get recycle view
-    mRecyclerView = findViewById(R.id.myClassRecycleView);
   }
 
   private void setupMyClassesAdapter(List<ClassListInformation> myClassesInfo) {

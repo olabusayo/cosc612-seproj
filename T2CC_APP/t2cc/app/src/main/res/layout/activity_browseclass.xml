@@ -100,9 +100,9 @@
             android:id="@+id/subUnsubLabel"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:layout_weight="0"
             android:text="Subscribe"
-            android:layout_gravity="bottom"
             android:textStyle="bold" />
 
         <TextView
@@ -121,6 +121,17 @@
         android:layout_height="0dp"
         android:background="@drawable/shape"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/classHeaderView" />
+
+    <ProgressBar
+        android:id="@+id/browseClassProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/subscribe2ClassRecycleView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/classHeaderView" />
