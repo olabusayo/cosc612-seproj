@@ -25,14 +25,14 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.t2cc.FirestoreConnections.StudentCollectionAccessors;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class RegistrationActivity extends AppCompatActivity implements
-    View.OnClickListener, FirestoreConnections.StudentCollectionAccessors {
+    View.OnClickListener {
 
   private final static String TAG = "T2CC:Registration";
 
@@ -73,7 +73,7 @@ public class RegistrationActivity extends AppCompatActivity implements
     mAuth = FirebaseAuth.getInstance();
     mAuthUI = AuthUI.getInstance();
     mFBDB = FirebaseFirestore.getInstance();
-    mStudentsRef = mFBDB.collection(mStudentsCollection);
+    mStudentsRef = mFBDB.collection(StudentCollectionAccessors.mStudentsCollection);
 
     mAuthListener = new FirebaseAuth.AuthStateListener() {
       @Override
@@ -169,9 +169,9 @@ public class RegistrationActivity extends AppCompatActivity implements
       String mStudentUid = user.getUid();
 
       Map<String, Object> student = new HashMap<>();
-      student.put(mStudentCollectionFieldFirstName, mFirstName);
-      student.put(mStudentCollectionFieldLastName, mLastName);
-      student.put(mStudentCollectionEmail, mEmail);
+      student.put(StudentCollectionAccessors.mStudentCollectionFieldFirstName, mFirstName);
+      student.put(StudentCollectionAccessors.mStudentCollectionFieldLastName, mLastName);
+      student.put(StudentCollectionAccessors.mStudentCollectionFieldEmail, mEmail);
 
       mStudentsRef
           .document(mStudentUid)

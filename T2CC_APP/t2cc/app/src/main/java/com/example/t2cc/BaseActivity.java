@@ -16,6 +16,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class BaseActivity extends AppCompatActivity {
 
   FirebaseFirestore mFBDB;
@@ -33,7 +36,6 @@ public class BaseActivity extends AppCompatActivity {
     mAuth = FirebaseAuth.getInstance();
     mAuthUI = AuthUI.getInstance();
     mCurrentUser = mAuth.getCurrentUser();
-
     if(mCurrentUser != null) {
       mCurrentUserID = mCurrentUser.getUid();
     }
@@ -42,16 +44,16 @@ public class BaseActivity extends AppCompatActivity {
   public void onStart() {//check if user is signed in
     super.onStart();
     // Check if user is signed in (non-null) and update UI accordingly.
-    FirebaseUser currentUser = mAuth.getCurrentUser();
-    if (currentUser != null) {
-      currentUser.reload();
-      if (!currentUser.isEmailVerified()) {
+    if (mCurrentUser != null) {
+      mCurrentUser.reload();
+      mCurrentUserID = mCurrentUser.getUid();
+      if (!mCurrentUser.isEmailVerified()) {
         Log.w(TAG, "On Home Screen without Verification");
         Toast.makeText(getApplicationContext(), "Email not verified.",
             Toast.LENGTH_LONG).show();
         logOut();
       } else {
-        setStudentsInitials(currentUser);
+        setStudentsInitials(mCurrentUser);
       }
     } else {
       changeToLoginActivity();
@@ -128,11 +130,10 @@ public class BaseActivity extends AppCompatActivity {
 class ClassListInformation {
   String className;
   String classNumber;
-  Boolean subscription;
   String status;
   String classID;
   BaseActivity activityObject;
-  Integer unreadMessageCount;
+
 
   ClassListInformation(BaseActivity activityObject, String classID,
       String className, String classNum, String requestStatus) {
@@ -144,12 +145,16 @@ class ClassListInformation {
   }
 
   public ClassListInformation(BaseActivity activityObject, String classID,
-      String className, String classNum, Integer unReadMessages) {
+      String className, String classNum) {
 
     this.className = className;
     this.classNumber = classNum;
-    this.unreadMessageCount = unReadMessages;
     this.classID = classID;
     this.activityObject = activityObject;
   }
+
+  void toggleRequestStatus() {
+    this.status = this.status.equals("pending") ? "none" : "pending";
+  }
+
 }
