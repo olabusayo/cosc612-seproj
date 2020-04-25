@@ -30,7 +30,8 @@
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
-            android:text="Click on the button to see subscribed classes"
+            android:text="Subscribed Classes"
+            android:textAlignment="center"
             android:textSize="20dp"
             android:textStyle="bold" />
 
@@ -39,7 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="MyClasses" />
+            android:text="My Classes" />
 
     </LinearLayout>
 
@@ -64,7 +65,8 @@
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
-            android:text="Subscribe to new classes"
+            android:text="Available Classes"
+            android:textAlignment="center"
             android:textSize="20dp"
             android:textStyle="bold" />
 

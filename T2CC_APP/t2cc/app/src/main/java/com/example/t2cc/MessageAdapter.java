@@ -15,11 +15,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     // for debugging
     private static final String TAG = "MessageAdapter: ";
 
-    private List<messageData> mdata;
+    private List<MessageData> mdata;
     private Context mcontext;
 
     // constructor
-    public MessageAdapter (List<messageData> data, Context context){
+    public MessageAdapter (List<MessageData> data, Context context){
         mdata = data;
         mcontext = context;
     }

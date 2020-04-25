@@ -21,6 +21,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
+import com.example.t2cc.FirestoreConnections.ClassesCollectionAccessors;
+import com.example.t2cc.FirestoreConnections.ClassRosterCollectionAccessors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,27 +31,23 @@ import java.util.Map;
 
 import static com.google.android.gms.tasks.Tasks.whenAllSuccess;
 
-public class MyClassActivity extends BaseActivity implements
-    FirestoreConnections.ClassRosterCollectionAccessors,
-    FirestoreConnections.ClassesCollectionAccessors {
+public class MyClassActivity extends BaseActivity {
 
   final static String TAG = "T2CC:MyClasses";
   MyClassAdapter mAdapter;
   RecyclerView mRecyclerView;
   private List<ClassListInformation> myClassesInfo;
   private Map<String, ClassListInformation> myClassesInfoHash;
-  private CollectionReference mClassRosterRef;
-  private CollectionReference mClassesRef;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_myclass);
-
+    // get recycle view
+    mRecyclerView = findViewById(R.id.myClassRecycleView);
     myClassesInfoHash = new HashMap<>();
     myClassesInfo = new ArrayList<>();
-    mClassRosterRef = mFBDB.collection(mClassRosterCollection);
-    mClassesRef = mFBDB.collection(mClassesCollection);
+
     findViewById(R.id.myClassBodyLabel).setOnClickListener(
         new View.OnClickListener() {
           @Override
@@ -70,9 +68,6 @@ public class MyClassActivity extends BaseActivity implements
             }
           }
         });
-
-    // get recycle view
-    mRecyclerView = findViewById(R.id.myClassRecycleView);
   }
 
   private void setupMyClassesAdapter(List<ClassListInformation> myClassesInfo) {
@@ -83,7 +78,7 @@ public class MyClassActivity extends BaseActivity implements
 
   private Task<List<Object>> populateMyClassesViewData() {
     Task<List<Object>> gatherSubscribedClassListInfo = whenAllSuccess(
-        getUsersSubscribedClassesTask(mCurrentUserID).continueWithTask(
+        ClassRosterCollectionAccessors.getUsersSubscribedClassesTask(mCurrentUserID).continueWithTask(
             new Continuation<QuerySnapshot, Task<QuerySnapshot>>() {
               @Override
               public Task<QuerySnapshot> then(
@@ -93,7 +88,7 @@ public class MyClassActivity extends BaseActivity implements
                 for (DocumentSnapshot cDoc : myClassesResult.getDocuments()) {
                   classIDs.add(cDoc.getId());
                 }
-                return getSpecificClassesInfoTask(classIDs);
+                return ClassesCollectionAccessors.getSpecificClassesInfoTask(classIDs);
               }
             }));
     // leaving this for when we add message count
@@ -109,14 +104,14 @@ public class MyClassActivity extends BaseActivity implements
             Map<String, Object> classInfo = classDocument.getData();
             String classID = classDocument.getId();
 
-            String className = (String) classInfo.get(mClassesCollectionFieldTitle);
+            String className =
+                (String) classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldTitle);
             String classNum = String.format("%s-%s",
-                classInfo.get(mClassesCollectionFieldCourseNumber),
-                classInfo.get(mClassesCollectionFieldSection));
-            // FIXME logic to get unread messages
-            Integer unReadMessages = 3;
+                classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldCourseNumber),
+                classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldSection));
+
             ClassListInformation cli = new ClassListInformation(MyClassActivity.this,
-                classID, className, classNum, unReadMessages);
+                classID, className, classNum);
             myClassesInfoHash.put(classID, cli);
           }
           myClassesInfo.clear();
@@ -132,17 +127,6 @@ public class MyClassActivity extends BaseActivity implements
     return gatherSubscribedClassListInfo;
   }
 
-  private Task<QuerySnapshot> getUsersSubscribedClassesTask(String userID) {
-    return mClassRosterRef
-        .whereArrayContains(mClassRosterCollectionFieldMember, userID).get();
-  }
-
-  private Task<QuerySnapshot> getSpecificClassesInfoTask(List<String> classIDs) {
-    return mClassesRef
-        .whereIn(FieldPath.documentId(), classIDs)
-        .get();
-  }
-
   void handleUnsubscribeToggle(MyClassActivity mcaObject, String classID) {
     Log.d(mcaObject.TAG, "handleSubscriptionToggle");
     mcaObject.unsubscribeFromClass(classID);
@@ -150,7 +134,7 @@ public class MyClassActivity extends BaseActivity implements
 
   private void unsubscribeFromClass(final String classID) {
     Log.d(TAG, "unsubscribeFromClass");
-    final DocumentReference classRosterRef = mClassRosterRef
+    final DocumentReference classRosterRef = ClassRosterCollectionAccessors.mClassRosterRef
         .document(classID);
     mFBDB.runTransaction(new Transaction.Function<Void>() {
       @Nullable
@@ -158,7 +142,7 @@ public class MyClassActivity extends BaseActivity implements
       public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
         DocumentSnapshot rosterClassDoc = transaction.get(classRosterRef);
         if (rosterClassDoc.exists()) {
-          transaction.update(classRosterRef, mClassRosterCollectionFieldMember,
+          transaction.update(classRosterRef, ClassRosterCollectionAccessors.mClassRosterCollectionFieldMember,
               FieldValue.arrayRemove(mCurrentUserID));
         } else {
           Log.w(TAG, "Attempted to unsubscribe from class with no roster.");
