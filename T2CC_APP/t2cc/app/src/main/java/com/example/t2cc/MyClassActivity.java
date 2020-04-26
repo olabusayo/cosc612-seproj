@@ -3,6 +3,8 @@ package com.example.t2cc;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +38,9 @@ public class MyClassActivity extends BaseActivity {
   final static String TAG = "T2CC:MyClasses";
   MyClassAdapter mAdapter;
   RecyclerView mRecyclerView;
+  ProgressBar mProgressBar;
+  TextView emptyClass;
+
   private List<ClassListInformation> myClassesInfo;
   private Map<String, ClassListInformation> myClassesInfoHash;
 
@@ -43,8 +48,15 @@ public class MyClassActivity extends BaseActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_myclass);
+
     // get recycle view
     mRecyclerView = findViewById(R.id.myClassRecycleView);
+    emptyClass = findViewById(R.id.myClassEmpty);
+    mProgressBar = findViewById(R.id.myClassProgressBar);
+    mRecyclerView.setVisibility(View.GONE);
+    emptyClass.setVisibility(View.GONE);
+
+
     myClassesInfoHash = new HashMap<>();
     myClassesInfo = new ArrayList<>();
 
@@ -63,11 +75,19 @@ public class MyClassActivity extends BaseActivity {
             if (task.isSuccessful()) {
               Log.d(TAG, "setUpAdapterOnCreate:success");
               setupMyClassesAdapter(myClassesInfo);
+              mProgressBar.setVisibility(View.GONE);
+              mRecyclerView.setVisibility(View.VISIBLE);
+              if(mAdapter.getItemCount() == 0){
+                emptyClass.setVisibility(View.VISIBLE);
+              }
             } else {
               Log.w(TAG, "setUpAdapterOnCreate:failure");
+              mProgressBar.setVisibility(View.GONE);
+              emptyClass.setVisibility(View.VISIBLE);
             }
           }
         });
+
   }
 
   private void setupMyClassesAdapter(List<ClassListInformation> myClassesInfo) {
@@ -113,6 +133,8 @@ public class MyClassActivity extends BaseActivity {
             ClassListInformation cli = new ClassListInformation(MyClassActivity.this,
                 classID, className, classNum);
             myClassesInfoHash.put(classID, cli);
+
+
           }
           myClassesInfo.clear();
           myClassesInfo.addAll(myClassesInfoHash.values());
