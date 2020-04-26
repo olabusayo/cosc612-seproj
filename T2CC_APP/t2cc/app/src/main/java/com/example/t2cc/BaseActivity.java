@@ -15,13 +15,12 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.Calendar;
-import java.util.Date;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class BaseActivity extends AppCompatActivity {
 
   FirebaseFirestore mFBDB;
+  FirebaseMessaging mFCM;
   FirebaseAuth mAuth;
   String mCurrentUserID;
   FirebaseUser mCurrentUser;
@@ -33,10 +32,12 @@ public class BaseActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     // firebase Auth
     mFBDB = FirebaseFirestore.getInstance();
+    mFCM = FirebaseMessaging.getInstance();
     mAuth = FirebaseAuth.getInstance();
     mAuthUI = AuthUI.getInstance();
     mCurrentUser = mAuth.getCurrentUser();
-    if(mCurrentUser != null) {
+
+    if (mCurrentUser != null) {
       mCurrentUserID = mCurrentUser.getUid();
     }
   }

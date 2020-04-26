@@ -8,8 +8,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.sql.Time;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,13 +43,14 @@ public class FirestoreConnections {
 
   public static class ClassRosterCollectionAccessors {
     public static final String mClassRosterCollection = "class_roster";
-    public static final CollectionReference mClassRosterRef = mFBDB.collection(mClassRosterCollection);
+    public static final CollectionReference mClassRosterRef = mFBDB
+        .collection(mClassRosterCollection);
 
-    public static final String mClassRosterCollectionFieldMember = "students";
+    public static final String mClassRosterCollectionFieldStudents = "students";
 
     public static Task<QuerySnapshot> getUsersSubscribedClassesTask(String userID) {
       return mClassRosterRef
-          .whereArrayContains(mClassRosterCollectionFieldMember, userID).get();
+          .whereArrayContains(mClassRosterCollectionFieldStudents, userID).get();
     }
   }
 
@@ -69,12 +68,13 @@ public class FirestoreConnections {
     public static final CollectionReference mSubscriptionRequestsRef =
         mFBDB.collection(mSubscriptionRequestsCollection);
 
-    public static final String mSubscriptionRequestsCollectionRequests = "requests";
+    public static final String mSubscriptionRequestsCollectionFieldRequests = "requests";
 
     public static Task<QuerySnapshot> getUsersSubscriptionRequests(String userID) {
       return mSubscriptionRequestsRef
           .whereArrayContains(
-              SubscriptionRequestsCollectionAccessors.mSubscriptionRequestsCollectionRequests, userID)
+              SubscriptionRequestsCollectionAccessors.mSubscriptionRequestsCollectionFieldRequests,
+              userID)
           .get();
     }
   }
@@ -108,5 +108,15 @@ public class FirestoreConnections {
           .orderBy(mMessagesCollectionFieldSentTime, messageSortDirection)
           .get();
     }
+  }
+
+  public abstract static class NotificationsCollectionAccessors {
+    public static final String mNotificationsCollection = "notifications";
+    public static final CollectionReference mNotificationsRef =
+        mFBDB.collection(mNotificationsCollection);
+
+    public static final String mNotificationsCollectionFieldToken = "notificationToken";
+
+
   }
 }
