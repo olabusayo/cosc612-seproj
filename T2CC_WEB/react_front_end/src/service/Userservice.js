@@ -25,7 +25,6 @@ export const login = user => {
       if(Object.keys(data).length === 0) {
         throw new Error('Please enter an existing email.');
       } else {
-        console.log('hehe');
         return auth.signInWithEmailAndPassword(user.email, user.password);
       }
     });

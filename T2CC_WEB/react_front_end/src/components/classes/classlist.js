@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { getAll } from "../../service/Classservice"
+import { getAll, isActive } from "../../service/Classservice"
 import { AuthContext } from "../../providers/Auth";
 
 const ClassList = () => {
@@ -9,25 +9,26 @@ const ClassList = () => {
     const [userId, setUserId] = useState(0);
 
     useEffect(() => {
-      getAll(user.email).then(res => {
-        let ClassListArray = res.data;
-        console.log(ClassListArray);
-        var list = [];
-        ClassListArray.map((item,index) =>
-           list.push(<tr key={index}>
+      getAll(user.uid).then(res => {
+        if(Object.keys(res.data).length > 0) {
+          let ClassListArray = res.data;
+          var list = [];
+          ClassListArray.map((item,index) => {
+            if(isActive(item.data.term, item.data.year)) {
+              list.push(
+                <tr key={index}>
+                  <td>{item.data.course_number}</td>
+                  <td>{item.data.section}</td>
+                  <td>{item.data.title}</td>
+                  <td style={{width: "25%"}}> {item.data.term}</td>
+                  <td>{item.data.year}</td>
+                </tr>)
+            }
             
-               <td>{item.course_number}</td>
-               <td>{item.section}</td>
-               <td>{item.title}</td>
-               <td style={{width: "25%"}}> {item.term}</td>
-               <td>{item.year}</td>
-               <td>
-                   <span style={{padding: "6px"}} className="badge badge-success">Active</span>
-               </td>
-             </tr>)
-         );
+          });
 
-         setClassLists(list);
+          setClassLists(list);
+        }
       }); 
     }, [userId]);
 
@@ -49,7 +50,6 @@ const ClassList = () => {
                     <th>Title</th>
                     <th>Term</th>
                     <th>Year</th>
-                    <th style={{width: "10%"}}>Status</th>
                     
                   </tr>
                   </thead>

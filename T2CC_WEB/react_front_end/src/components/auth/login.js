@@ -1,7 +1,6 @@
-import React, { useState, useContext } from 'react';
-import { connect, } from 'react-redux';
+import React, { useState } from 'react';
 import { Link, useHistory } from "react-router-dom";
-import { login } from '../../service/Userservice';
+import { login, logout } from '../../service/Userservice';
 
 const Login = () =>  {
 
@@ -14,6 +13,8 @@ const Login = () =>  {
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    logout();
+    
     if(!email || !password) {
       setError("Please fill in the required fields");
     } else {
@@ -23,8 +24,13 @@ const Login = () =>  {
       }
   
       login(user)
-              .then(() =>{
-                  history.push("/");
+              .then((data) =>{
+                  if (!data.user.emailVerified) {
+                    setError("Please verify your email to continue");
+                  } else {
+                    console.log("tonga eee");
+                    history.push("/"); 
+                  }    
               })
               .catch(e => {
                   setError(e.message);
@@ -80,8 +86,4 @@ const Login = () =>  {
   )
 }
 
-function mapStateToProps(state) {
-  return { state };
-}
-
-export default connect(mapStateToProps)(Login)
+export default Login

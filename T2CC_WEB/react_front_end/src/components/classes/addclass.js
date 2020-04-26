@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { add } from "../../service/Classservice"
+import React, { useState, useContext } from 'react';
+import { add, getYear } from "../../service/Classservice"
 import { AuthContext } from "../../providers/Auth";
 import { useHistory } from "react-router-dom";
 
@@ -22,7 +22,7 @@ const AddClass = () => {
       section : section, 
       term : term, 
       year : year,
-      teacher_email : user.email
+      teacher_id : user.uid
     };
 
     add(myclass)
@@ -34,12 +34,17 @@ const AddClass = () => {
     });
   };
 
+  const years = getYear();
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if(!classtitle || !courseno || !section || !term || !year) {
       setError("Please fill in the required fields");
-    } else {
+    } else if(section < 1 || section > 10) {
+      setError("Please enter a valid section (01 to 10)");
+    } 
+    else {
       createClass();
     }
   }
@@ -62,7 +67,6 @@ const AddClass = () => {
     else if(name === 'year'){
       setYear(value);
     }
-
   }
 
     return(
@@ -91,7 +95,7 @@ const AddClass = () => {
                   </div>
                   <div className="form-group">
                     <label>Section</label><span className="error-class">*</span>
-                    <input placeholder="Section" type="text" name="section" className="form-control" onChange={e => handleInputChange(e)}/>
+                    <input placeholder="Section" type="number" name="section" className="form-control" onChange={e => handleInputChange(e)}/>
                   </div>
                   <div class="form-group">
                     <label htmlFor="inputStatus">Term</label><span className="error-class">*</span>
@@ -106,8 +110,8 @@ const AddClass = () => {
                     <label htmlFor="inputStatus">Year</label><span className="error-class">*</span>
                     <select class="form-control custom-select" name="year" onChange={e => handleInputChange(e)}>
                       <option selected disabled>Select one</option>
-                      <option value="2020">2020</option>
-                      <option value="2021">2021</option>
+                      <option value="2020">{years[0]}</option>
+                      <option value="2020">{years[1]}</option>
                     </select>
                   </div>
                 </div>

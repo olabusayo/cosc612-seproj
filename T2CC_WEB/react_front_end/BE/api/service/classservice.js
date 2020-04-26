@@ -3,17 +3,17 @@ const db = require('../../properties/db');
 
 router.post('/add', (req, res) => {
     
-    const { course_number, section, teacher_email, term, title, year} = req.body;
-    const data = { course_number, section, teacher_email, term, title, year };
-    let classRefs = db.collection('classes').doc(course_number + " " + section).set(data).then(ref => {
+    const { course_number, section, teacher_id, term, title, year} = req.body;
+    const data = { course_number, section, teacher_id, term, title, year };
+    let classRefs = db.collection('classes').add(data).then(ref => {
         res.send(ref);
     });
 });
 
-router.get('/getAll/:email', (req, res) => {
-    const email = req.params.email;
+router.get('/getAll/:id', (req, res) => {
+    const id = req.params.id;
     let classRefs = db.collection('classes');
-    classRefs.where('teacher_email', '==' , email).get()
+    classRefs.where('teacher_id', '==' , id).get()
     .then(snapshot => {
       let data = [];  
       if (snapshot.empty) {
@@ -21,7 +21,12 @@ router.get('/getAll/:email', (req, res) => {
       }  
   
       snapshot.forEach(doc => {
-        data.push(doc.data());
+        const result = {
+          id: doc.id,
+          data: doc.data()
+        }
+        data.push(result);
+        console.log(result);
       });
 
       res.send(data);

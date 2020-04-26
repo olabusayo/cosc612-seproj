@@ -19,6 +19,9 @@ import Dashboard from './dashboard';
 import AddClass from './classes/addclass';
 import ClassList from './classes/classlist';
 
+import Subscription from './subscription/subscription';
+import CreateMessage from './messages/createmsg';
+
 import { AuthContext } from "../providers/Auth";
 
 // middleware configuration
@@ -30,39 +33,50 @@ const store = configureStore();
 const Application = () => {
 
     const currentUser = useContext(AuthContext);
+    console.log(currentUser);
+
+    const loginPage =  (
+        <Provider store={store}>
+          <ConnectedRouter history={history}>
+          <Switch>
+              <Route exact path="/" component={Login} />
+              <Route exact path="/register" component={Register} />
+          </Switch>
+          </ConnectedRouter>
+        </Provider>
+      );
+
+    const homePage = (
+        <Provider store={store} forceRefresh={true}>    
+            <ConnectedRouter history={history}>
+                <Header/>
+                <Sidebar/>
+                <Switch>
+                    <div className="content-wrapper">
+                        <section className="content">
+                            <Breadcrumb />
+                            <div className="container-fluid">
+                                <Route exact path="/" component={ClassList} />
+                                <Route exact path="/create-class" component={AddClass} />
+                                <Route exact path="/subscription" component={Subscription} />
+                                <Route exact path="/create-message" component={CreateMessage} />
+                            </div>
+                        </section>
+                    </div>
+                </Switch>
+            </ConnectedRouter>
+        </Provider>
+    );
 
     if(!currentUser) {
-        return (
-            <Provider store={store}>
-              <ConnectedRouter history={history}>
-              <Switch>
-                  <Route exact path="/" component={Login} />
-                  <Route exact path="/register" component={Register} />
-              </Switch>
-              </ConnectedRouter>
-            </Provider>
-          )
-    } else {
-
-        return (
-            <Provider store={store} forceRefresh={true}>    
-                <ConnectedRouter history={history}>
-                    <Header/>
-                    <Sidebar/>
-                    <Switch>
-                        <div className="content-wrapper">
-                            <section className="content">
-                                <Breadcrumb />
-                                <div className="container-fluid">
-                                    <Route exact path="/" component={ClassList} />
-                                    <Route exact path="/createclass" component={AddClass} />
-                                </div>
-                            </section>
-                        </div>
-                    </Switch>
-                </ConnectedRouter>
-            </Provider>
-        );
+        return loginPage;
+    } 
+    else {
+        if(currentUser.emailVerified) {
+            return homePage;
+        } else {
+            return loginPage;
+        }
     }
 };
 

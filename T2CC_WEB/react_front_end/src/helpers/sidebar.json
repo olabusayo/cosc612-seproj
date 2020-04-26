@@ -3,13 +3,25 @@
                 {
               		"Main_Moudle_Name" : "My Classes",
                   "Url": "/",
-                  "Icon":"nav-icon fas fa-list",
+                  "Icon":"nav-icon fa fa-list",
                   "Active":true
                 },
                 {
               		"Main_Moudle_Name" : "Create a new class",
-                  "Url": "createclass",
-                  "Icon":"nav-icon fas fa-plus",
+                  "Url": "create-class",
+                  "Icon":"nav-icon fa fa-plus",
+                  "Active":true
+                },
+                {
+              		"Main_Moudle_Name" : "Subscription Request",
+                  "Url": "subscription",
+                  "Icon":"nav-icon fa fa-user-plus",
+                  "Active":true
+                },
+                {
+              		"Main_Moudle_Name" : "Create a Message",
+                  "Url": "create-message",
+                  "Icon":"nav-icon fa fa-envelope",
                   "Active":true
             	  }
 	           ]

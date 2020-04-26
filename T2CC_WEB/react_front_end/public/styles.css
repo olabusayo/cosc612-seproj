@@ -40,3 +40,7 @@
    height: auto;
    width: 0;
  }
+
+ .ck-editor__editable {
+  min-height: 500px;
+}

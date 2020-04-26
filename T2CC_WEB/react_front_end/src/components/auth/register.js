@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { connect, } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { register, logout } from '../../service/Userservice';
+import { auth } from "../../properties/firebase";
 
 const Regsiter = () => {
  
@@ -21,7 +21,7 @@ const Regsiter = () => {
       if(!email || !password || !fname || !lname || !pwdVerify) {
         setError("Please fill in the required fields");
       } else if (password.localeCompare(pwdVerify) != 0){
-        setError("Password does not match");
+        setError("Passwords don'ts match");
       }
       else {
 
@@ -34,8 +34,14 @@ const Regsiter = () => {
 
         register(newUser)
             .then((user) => {
+              let currentUser = auth.currentUser;
+              currentUser.sendEmailVerification().then(function() {
                 logout();
-                history.push('/');
+                console.log("email sent");
+                history.push("/");
+              }).catch(function(error) {
+                console.log(error.message);
+              });
             }).catch(error => {
                 setError(error.message);
             });
@@ -127,8 +133,4 @@ const Regsiter = () => {
 
 }
 
-function mapStateToProps(state) {
-  return { state };
-}
-
-export default connect(mapStateToProps)(Regsiter)
+export default Regsiter
