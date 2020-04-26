@@ -93,13 +93,13 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/myClassTeacherEmailLabel"
+            android:id="@+id/myClassTeacherLabel"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:layout_gravity="bottom"
             android:textStyle="bold"
-            android:text="Email" />
+            android:text="Teacher" />
 
         <TextView
             android:id="@+id/subUnsubLabel"

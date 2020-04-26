@@ -13,7 +13,7 @@ public class BrowseClassesViewHolder extends RecyclerView.ViewHolder {
   TextView classNameRowLabel;
   TextView statusLabelRow;
   Switch subscribeSwitchRow;
-  TextView teacherEmailLabel;
+  TextView subscribeTeacherRowLabel;
 
   public BrowseClassesViewHolder(@NonNull View itemView) {
     super(itemView);
@@ -22,6 +22,6 @@ public class BrowseClassesViewHolder extends RecyclerView.ViewHolder {
     classNumberRowLabel = (TextView) itemView.findViewById(R.id.classNumberRowLabel);
     statusLabelRow = (TextView) itemView.findViewById(R.id.statusLabelRow);
     subscribeSwitchRow = (Switch) itemView.findViewById(R.id.subscribeSwitchRow);
-    teacherEmailLabel = (TextView)itemView.findViewById(R.id.teacherEmailRowLabel);
+    subscribeTeacherRowLabel = (TextView)itemView.findViewById(R.id.subscribeTeacherRowLabel);
   }
 }
