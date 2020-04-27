@@ -46,6 +46,8 @@
 
     <TextView
         android:id="@+id/statusLabelRow"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:layout_width="60dp"
         android:layout_gravity="center_vertical"
         android:layout_height="20dp"

@@ -117,9 +117,13 @@ public class FirestoreConnections {
     public static Task<QuerySnapshot> getUsersMessagesTask(List<String> classIDs, Date cutOffDate) {
       Timestamp tsCutOffDate = new Timestamp(cutOffDate);
       Query.Direction messageSortDirection = Query.Direction.DESCENDING;
+      // FIXME Limitation of 10 array, maybe we don't let students subscribe for more than 10
+      //  classes
+      List<String> hardLimitClassList = classIDs.subList(0, Math.min(classIDs.size(),
+          10));
       return mMessagesRef
           .whereGreaterThanOrEqualTo(mMessagesCollectionFieldSentTime, tsCutOffDate)
-          .whereIn(mMessagesCollectionFieldClassID, classIDs)
+          .whereIn(mMessagesCollectionFieldClassID, hardLimitClassList)
           .orderBy(mMessagesCollectionFieldSentTime, messageSortDirection)
           .get();
     }
