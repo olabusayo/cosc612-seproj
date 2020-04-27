@@ -45,6 +45,7 @@ public class BrowseClassesAdapter extends RecyclerView.Adapter<BrowseClassesView
     holder.classNumberRowLabel.setText(mdata.get(position).classNumber);
     holder.classNameRowLabel.setText(mdata.get(position).className);
     holder.statusLabelRow.setText(mdata.get(position).status);
+    holder.subscribeTeacherRowLabel.setText(mdata.get(position).teacherName);
 
     if (mdata.get(position).status.equals("pending")) {
       holder.subscribeSwitchRow.setChecked(true);

@@ -1,15 +1,27 @@
 package com.example.t2cc;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 
 public class FirestoreConnections {
   public static final FirebaseFirestore mFBDB = FirebaseFirestore.getInstance();
@@ -20,14 +32,19 @@ public class FirestoreConnections {
 
     public static final String mClassesCollectionFieldCourseNumber = "course_number";
     public static final String mClassesCollectionFieldSection = "section";
+    public static final String mClassesCollectionFieldTeacherID = "teacher_id";
     public static final String mClassesCollectionFieldTerm = "term";
     public static final String mClassesCollectionFieldTitle = "title";
     public static final String mClassesCollectionFieldYear = "year";
 
 
     public static Task<QuerySnapshot> getSpecificClassesInfoTask(List<String> classIDs) {
+      // FIXME Limitation of 10 array, maybe we don't let students subscribe for more than 10
+      //  classes
+      List<String> hardLimitClassList = classIDs.subList(0, Math.min(classIDs.size(),
+          10));
       return mClassesRef
-          .whereIn(FieldPath.documentId(), classIDs)
+          .whereIn(FieldPath.documentId(), hardLimitClassList)
           .get();
     }
 
@@ -77,6 +94,15 @@ public class FirestoreConnections {
               userID)
           .get();
     }
+  }
+
+  public abstract static class TeacherCollectionAccessors {
+    public static final String mTeachersCollection = "teachers";
+    public static final CollectionReference mTeachersRef = mFBDB.collection(mTeachersCollection);
+
+    public static final String mTeacherCollectionFieldEmail = "email";
+    public static final String mTeacherCollectionFieldFirstName = "fname";
+    public static final String mTeacherCollectionFieldLastName = "lname";
   }
 
   public abstract static class MessagesCollectionAccessors {

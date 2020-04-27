@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.t2cc.FirestoreConnections.ClassRosterCollectionAccessors;
 import com.example.t2cc.FirestoreConnections.ClassesCollectionAccessors;
 import com.example.t2cc.FirestoreConnections.SubscriptionRequestsCollectionAccessors;
+import com.example.t2cc.FirestoreConnections.TeacherCollectionAccessors;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -23,6 +24,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -84,7 +87,7 @@ public class BrowseClassesActivity extends BaseActivity {
               setupBrowseClassesAdapter(availableClassesInfo);
               mProgressBar.setVisibility(View.GONE);
               mRecyclerView.setVisibility(View.VISIBLE);
-              if(mAdapter.getItemCount() == 0){
+              if (mAdapter.getItemCount() == 0) {
                 mEmptyText.setVisibility(View.VISIBLE);
               }
 
@@ -117,49 +120,89 @@ public class BrowseClassesActivity extends BaseActivity {
         List<Object> docs;
         if (task.isSuccessful() && ((docs = task.getResult()) != null && !docs.isEmpty())) {
           Log.d(TAG, "populateAvailableClassesViewData:success");
-          QuerySnapshot allClassesResult = (QuerySnapshot) docs.get(0);
-          QuerySnapshot myClassesResult = (QuerySnapshot) docs.get(1);
-          QuerySnapshot myRequestsResult = (QuerySnapshot) docs.get(2);
+          final QuerySnapshot allClassesResult = (QuerySnapshot) docs.get(0);
+          final QuerySnapshot myClassesResult = (QuerySnapshot) docs.get(1);
+          final QuerySnapshot myRequestsResult = (QuerySnapshot) docs.get(2);
 
-          for (QueryDocumentSnapshot classDocument : allClassesResult) {
-            Map<String, Object> classInfo = classDocument.getData();
-            String classID = classDocument.getId();
-            //check if student subscribed
-            boolean isSubscribed = false;
-            for (DocumentSnapshot d : myClassesResult.getDocuments()) {
-              if (d.getId().equals(classID)) {
-                isSubscribed = true;
-                break;
-              }
-            }
-            if (isSubscribed) {
-              // we dont want to add subscribed classes to available class list
-              continue;
-            }
-            //check is student requested
-            boolean hasBeenRequested = false;
-            for (DocumentSnapshot d : myRequestsResult.getDocuments()) {
-              if (d.getId().equals(classID)) {
-                hasBeenRequested = true;
-                break;
-              }
-            }
+          final List<String> tl = new ArrayList<>();
+          for (DocumentSnapshot doc : allClassesResult.getDocuments()) {
+            tl.add((String) doc.get("teacher_id"));
+          }
+          final Map<String, Map<String, Object>> allTeachersInfoHash = new HashMap<>();
+          TeacherCollectionAccessors.mTeachersRef
+              .get()
+              .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                  if (task.isSuccessful()) {
+                    QuerySnapshot allTeachersResult = task.getResult();
+                    for (DocumentSnapshot teacherInfo : allTeachersResult) {
+                      String teacherID = teacherInfo.getId();
+                      if (tl.contains(teacherID)) {
+                        allTeachersInfoHash.put(teacherID, teacherInfo.getData());
+                      }
+                    }
 
-            String className = (String) classInfo.get(
-                ClassesCollectionAccessors.mClassesCollectionFieldTitle);
-            String classNum = String.format("%1$10s%2$10s",
-                classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldCourseNumber),
-                classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldSection));
-            String requestStatus = hasBeenRequested ? "pending" : "none";
-            ClassListInformation cli = new ClassListInformation(BrowseClassesActivity.this,
-                classID, className, classNum, requestStatus);
-            availableClassesInfoHash.put(classID, cli);
-          }
-          availableClassesInfo.clear();
-          availableClassesInfo.addAll(availableClassesInfoHash.values());
-          if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
-          }
+
+                    for (QueryDocumentSnapshot classDocument : allClassesResult) {
+                      Map<String, Object> classInfo = classDocument.getData();
+                      String classID = classDocument.getId();
+                      //check if student subscribed
+                      boolean isSubscribed = false;
+                      for (DocumentSnapshot d : myClassesResult.getDocuments()) {
+                        if (d.getId().equals(classID)) {
+                          isSubscribed = true;
+                          break;
+                        }
+                      }
+                      if (isSubscribed) {
+                        // we dont want to add subscribed classes to available class list
+                        continue;
+                      }
+                      //check is student requested
+                      boolean hasBeenRequested = false;
+                      for (DocumentSnapshot d : myRequestsResult.getDocuments()) {
+                        if (d.getId().equals(classID)) {
+                          hasBeenRequested = true;
+                          break;
+                        }
+                      }
+
+                      String className = (String) classInfo.get(
+                          ClassesCollectionAccessors.mClassesCollectionFieldTitle);
+		      String classNum = String.format("%1$10s%2$10s",
+                          classInfo
+                              .get(ClassesCollectionAccessors.mClassesCollectionFieldCourseNumber),
+                          classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldSection));
+                      String teacherID =
+                          (String) classInfo
+                              .get(ClassesCollectionAccessors.mClassesCollectionFieldTeacherID);
+                      Map<String, Object> teacherInfo = allTeachersInfoHash.get(teacherID);
+                      String teacherName = String.format("%s %s",
+                          StringUtils.capitalize( (String) teacherInfo
+                              .get(TeacherCollectionAccessors.mTeacherCollectionFieldFirstName)),
+                          StringUtils.capitalize((String) teacherInfo
+                              .get(TeacherCollectionAccessors.mTeacherCollectionFieldLastName)));
+                      String requestStatus = hasBeenRequested ? "pending" : "none";
+                      ClassListInformation cli = new ClassListInformation(
+                          BrowseClassesActivity.this,
+                          classID, className, classNum, teacherName, requestStatus);
+                      availableClassesInfoHash.put(classID, cli);
+                    }
+                    availableClassesInfo.clear();
+                    availableClassesInfo.addAll(availableClassesInfoHash.values());
+                    if (mAdapter != null) {
+                      mAdapter.notifyDataSetChanged();
+                      if (mAdapter.getItemCount() >= 0) {
+                        mEmptyText.setVisibility(View.GONE);
+                      }
+                    }
+
+                  } else {
+                    Log.w(TAG,"Get Teacher info failed", task.getException());
+                  }
+                }
+              });
         } else {
           Log.w(TAG, "populateAvailableClassesViewData:failure:", task.getException());
         }
@@ -202,6 +245,7 @@ public class BrowseClassesActivity extends BaseActivity {
           Log.d(TAG, "subscriptionRequested:success: " + classID);
           Objects.requireNonNull(availableClassesInfoHash.get(classID)).toggleRequestStatus();
           mAdapter.notifyDataSetChanged();
+          populateAvailableClassesViewData();
         } else {
           Log.w(TAG, "subscriptionRequested:failure: " + classID, task.getException());
         }

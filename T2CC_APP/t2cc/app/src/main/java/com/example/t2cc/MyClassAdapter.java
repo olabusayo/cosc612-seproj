@@ -47,6 +47,7 @@ public class MyClassAdapter extends RecyclerView.Adapter<MyClassViewHolder> {
     holder.myClassNumberLabel.setText(mdata.get(position).classNumber);
     holder.myClassNameLabel.setText(mdata.get(position).className);
     holder.myClassSubscribeSwitchRow.setChecked(true);
+    holder.myClassTeacher.setText(mdata.get(position).teacherName);
 
     holder.myClassSubscribeSwitchRow.setOnClickListener(new View.OnClickListener() {
       @Override

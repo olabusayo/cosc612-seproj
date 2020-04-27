@@ -11,6 +11,9 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.t2cc.FirestoreConnections.ClassRosterCollectionAccessors;
+import com.example.t2cc.FirestoreConnections.ClassesCollectionAccessors;
+import com.example.t2cc.FirestoreConnections.TeacherCollectionAccessors;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,8 +24,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
-import com.example.t2cc.FirestoreConnections.ClassesCollectionAccessors;
-import com.example.t2cc.FirestoreConnections.ClassRosterCollectionAccessors;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,7 +78,7 @@ public class MyClassActivity extends BaseActivity {
               setupMyClassesAdapter(myClassesInfo);
               mProgressBar.setVisibility(View.GONE);
               mRecyclerView.setVisibility(View.VISIBLE);
-              if(mAdapter.getItemCount() == 0){
+              if (mAdapter.getItemCount() == 0) {
                 emptyClass.setVisibility(View.VISIBLE);
               }
             } else {
@@ -96,49 +99,87 @@ public class MyClassActivity extends BaseActivity {
 
   private Task<List<Object>> populateMyClassesViewData() {
     Task<List<Object>> gatherSubscribedClassListInfo = whenAllSuccess(
-        ClassRosterCollectionAccessors.getUsersSubscribedClassesTask(mCurrentUserID).continueWithTask(
-            new Continuation<QuerySnapshot, Task<QuerySnapshot>>() {
-              @Override
-              public Task<QuerySnapshot> then(
-                  @NonNull Task<QuerySnapshot> task) throws Exception {
-                QuerySnapshot myClassesResult = task.getResult();
-                List<String> classIDs = new ArrayList<>();
-                for (DocumentSnapshot cDoc : myClassesResult.getDocuments()) {
-                  classIDs.add(cDoc.getId());
-                }
-                return ClassesCollectionAccessors.getSpecificClassesInfoTask(classIDs);
-              }
-            }));
+        ClassRosterCollectionAccessors.getUsersSubscribedClassesTask(mCurrentUserID)
+            .continueWithTask(
+                new Continuation<QuerySnapshot, Task<QuerySnapshot>>() {
+                  @Override
+                  public Task<QuerySnapshot> then(
+                      @NonNull Task<QuerySnapshot> task) throws Exception {
+                    QuerySnapshot myClassesResult = task.getResult();
+                    List<String> classIDs = new ArrayList<>();
+                    for (DocumentSnapshot cDoc : myClassesResult.getDocuments()) {
+                      classIDs.add(cDoc.getId());
+                    }
+                    return ClassesCollectionAccessors.getSpecificClassesInfoTask(classIDs);
+                  }
+                }));
     // leaving this for when we add message count
     gatherSubscribedClassListInfo.addOnCompleteListener(new OnCompleteListener<List<Object>>() {
       @Override
-      public void onComplete(@NonNull Task<List<Object>> task) {
+      public void onComplete(@NonNull final Task<List<Object>> task) {
         if (task.isSuccessful()) {
           Log.d(TAG, "populateMyClassesViewData:success");
           List<Object> docs = task.getResult();
-          QuerySnapshot myClassesResult = (QuerySnapshot) docs.get(0);
+          final QuerySnapshot myClassesResult = (QuerySnapshot) docs.get(0);
 
-          for (QueryDocumentSnapshot classDocument : myClassesResult) {
-            Map<String, Object> classInfo = classDocument.getData();
-            String classID = classDocument.getId();
-
-            String className =
-                (String) classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldTitle);
-            String classNum = String.format("%1$10s%2$10s",
-                classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldCourseNumber),
-                classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldSection));
-
-            ClassListInformation cli = new ClassListInformation(MyClassActivity.this,
-                classID, className, classNum);
-            myClassesInfoHash.put(classID, cli);
-
-
+          final List<String> tl = new ArrayList<>();
+          for (DocumentSnapshot doc : myClassesResult.getDocuments()) {
+            tl.add((String) doc.get("teacher_id"));
           }
-          myClassesInfo.clear();
-          myClassesInfo.addAll(myClassesInfoHash.values());
-          if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
-          }
+          final Map<String, Map<String, Object>> allTeachersInfoHash = new HashMap<>();
+          TeacherCollectionAccessors.mTeachersRef
+              .get()
+              .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> teacherInfoTask) {
+                  if (teacherInfoTask.isSuccessful()) {
+                    QuerySnapshot allTeachersResult = teacherInfoTask.getResult();
+                    for (DocumentSnapshot teacherInfo : allTeachersResult) {
+                      String teacherID = teacherInfo.getId();
+                      if (tl.contains(teacherID)) {
+                        allTeachersInfoHash.put(teacherID, teacherInfo.getData());
+                      }
+                    }
+
+
+                    for (QueryDocumentSnapshot classDocument : myClassesResult) {
+                      Map<String, Object> classInfo = classDocument.getData();
+                      String classID = classDocument.getId();
+
+                      String className =
+                          (String) classInfo
+                              .get(ClassesCollectionAccessors.mClassesCollectionFieldTitle);
+                      String classNum = String.format("%1$10s%2$10s",
+                          classInfo
+                              .get(ClassesCollectionAccessors.mClassesCollectionFieldCourseNumber),
+                          classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldSection));
+                      String teacherID =
+                          (String) classInfo
+                              .get(ClassesCollectionAccessors.mClassesCollectionFieldTeacherID);
+                      Map<String, Object> teacherInfo = allTeachersInfoHash.get(teacherID);
+                      String teacherName = String.format("%s %s",
+                          StringUtils.capitalize( (String) teacherInfo
+                              .get(TeacherCollectionAccessors.mTeacherCollectionFieldFirstName)),
+                          StringUtils.capitalize((String) teacherInfo
+                              .get(TeacherCollectionAccessors.mTeacherCollectionFieldLastName)));
+
+                      ClassListInformation cli = new ClassListInformation(MyClassActivity.this,
+                          classID, className, classNum, teacherName);
+                      myClassesInfoHash.put(classID, cli);
+                    }
+                    myClassesInfo.clear();
+                    myClassesInfo.addAll(myClassesInfoHash.values());
+                    if (mAdapter != null) {
+                      mAdapter.notifyDataSetChanged();
+                      if (mAdapter.getItemCount() > 0) {
+                        emptyClass.setVisibility(View.GONE);
+                      }
+                    }
+                  } else {
+                    Log.w(TAG, "Get Teacher info failed", teacherInfoTask.getException());
+                  }
+                }
+              });
         } else {
           Log.w(TAG, "populateMyClassesViewData:failure:", task.getException());
         }
@@ -162,7 +203,8 @@ public class MyClassActivity extends BaseActivity {
       public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
         DocumentSnapshot rosterClassDoc = transaction.get(classRosterRef);
         if (rosterClassDoc.exists()) {
-          transaction.update(classRosterRef, ClassRosterCollectionAccessors.mClassRosterCollectionFieldStudents,
+          transaction.update(classRosterRef,
+              ClassRosterCollectionAccessors.mClassRosterCollectionFieldStudents,
               FieldValue.arrayRemove(mCurrentUserID));
         } else {
           Log.w(TAG, "Attempted to unsubscribe from class with no roster.");
