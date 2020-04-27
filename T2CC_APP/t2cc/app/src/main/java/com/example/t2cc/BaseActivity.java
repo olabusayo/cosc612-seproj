@@ -133,25 +133,28 @@ class ClassListInformation {
   String classNumber;
   String status;
   String classID;
+  String teacherName;
   BaseActivity activityObject;
 
 
   ClassListInformation(BaseActivity activityObject, String classID,
-      String className, String classNum, String requestStatus) {
+      String className, String classNum, String teacherName, String requestStatus) {
     this.className = className;
     this.classNumber = classNum;
     this.status = requestStatus;
     this.classID = classID;
     this.activityObject = activityObject;
+    this.teacherName = teacherName;
   }
 
   public ClassListInformation(BaseActivity activityObject, String classID,
-      String className, String classNum) {
+      String className, String classNum, String teacherName) {
 
     this.className = className;
     this.classNumber = classNum;
     this.classID = classID;
     this.activityObject = activityObject;
+    this.teacherName = teacherName;
   }
 
   void toggleRequestStatus() {

@@ -14,7 +14,7 @@ public class MyClassViewHolder extends RecyclerView.ViewHolder {
     TextView myClassNameLabel;
     Switch myClassSubscribeSwitchRow;
     ImageView myClassMessageImage;
-    TextView myClassteacher;
+    TextView myClassTeacher;
 
     public MyClassViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -23,7 +23,7 @@ public class MyClassViewHolder extends RecyclerView.ViewHolder {
         myClassNumberLabel = (TextView)itemView.findViewById(R.id.myClassNumberRowLabel);
         myClassSubscribeSwitchRow = (Switch) itemView.findViewById(R.id.myClassSubscribeSwitchRow);
         myClassMessageImage = (ImageView)itemView.findViewById(R.id.myClassMessageImage);
-        myClassteacher = (TextView)itemView.findViewById(R.id.myClassTeacherRow);
+        myClassTeacher = (TextView)itemView.findViewById(R.id.myClassTeacherRow);
 
     }
 }
