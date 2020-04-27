@@ -1,6 +1,5 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const alerts = require('./handleAlertNotifications');
 
 const t2cc = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
@@ -55,8 +54,10 @@ if used in production
 //         let classID = context.params.classID;
 //         let newReqsArray = change.after.get(mSubscriptionRequestsCollectionFieldRequests);
 //         let oldReqsArray = change.before.get(mSubscriptionRequestsCollectionFieldRequests);
-//         let deletedStudent = oldReqsArray === undefined ? [] : oldReqsArray.filter(x => newReqsArray.indexOf(x) === -1);
-//         let addedStudent = newReqsArray === undefined ? [] : newReqsArray.filter(x => oldReqsArray.indexOf(x) === -1);
+//         oldReqsArray = oldReqsArray === undefined ? [] : oldReqsArray;
+//         newReqsArray = newReqsArray === undefined ? [] : newReqsArray;
+//         let deletedStudent = oldReqsArray.filter(x => newReqsArray.indexOf(x) === -1);
+//         let addedStudent = newReqsArray.filter(x => oldReqsArray.indexOf(x) === -1);
 //
 //         if (!deletedStudent.isEmpty && !(deletedStudent[0] === undefined)) {
 //             // student request was deleted so assume approval and add to roster
@@ -105,8 +106,10 @@ exports.toggleAlertNotifications = functions.firestore
         let classID = context.params.classID;
         let newStudentsArray = change.after.get(mClassRosterCollectionFieldStudents);
         let oldStudentsArray = change.before.get(mClassRosterCollectionFieldStudents);
-        let deletedStudent = oldStudentsArray === undefined ? [] : oldStudentsArray.filter(x => newStudentsArray.indexOf(x) === -1);
-        let addedStudent = newStudentsArray === undefined ? [] : newStudentsArray.filter(x => oldStudentsArray.indexOf(x) === -1);
+        oldStudentsArray = oldStudentsArray === undefined ? [] : oldStudentsArray;
+        newStudentsArray = newStudentsArray === undefined ? [] : newStudentsArray;
+        let deletedStudent = oldStudentsArray.filter(x => newStudentsArray.indexOf(x) === -1);
+        let addedStudent =  newStudentsArray.filter(x => oldStudentsArray.indexOf(x) === -1);
 
         if (!deletedStudent.isEmpty && !(deletedStudent[0] === undefined)) {
             // student unsubscribed from class so unsubscribe from topic

@@ -60,7 +60,7 @@ public class BrowseClassesAdapter extends RecyclerView.Adapter<BrowseClassesView
       public void onClick(View v) {
         BrowseClassesActivity bcaObject = (BrowseClassesActivity) mdata.get(position).activityObject;
         String classID = mdata.get(position).classID;
-        bcaObject.handleSubscriptionToggle(bcaObject, classID);
+        bcaObject.handleSubscriptionToggle(bcaObject, classID, holder.subscribeSwitchRow, holder.statusLabelRow);
       }
     });
 

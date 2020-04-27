@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -143,7 +144,6 @@ public class BrowseClassesActivity extends BaseActivity {
                       }
                     }
 
-
                     for (QueryDocumentSnapshot classDocument : allClassesResult) {
                       Map<String, Object> classInfo = classDocument.getData();
                       String classID = classDocument.getId();
@@ -170,7 +170,7 @@ public class BrowseClassesActivity extends BaseActivity {
 
                       String className = (String) classInfo.get(
                           ClassesCollectionAccessors.mClassesCollectionFieldTitle);
-		      String classNum = String.format("%1$10s%2$10s",
+                      String classNum = String.format("%1$10s%2$10s",
                           classInfo
                               .get(ClassesCollectionAccessors.mClassesCollectionFieldCourseNumber),
                           classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldSection));
@@ -179,7 +179,7 @@ public class BrowseClassesActivity extends BaseActivity {
                               .get(ClassesCollectionAccessors.mClassesCollectionFieldTeacherID);
                       Map<String, Object> teacherInfo = allTeachersInfoHash.get(teacherID);
                       String teacherName = String.format("%s %s",
-                          StringUtils.capitalize( (String) teacherInfo
+                          StringUtils.capitalize((String) teacherInfo
                               .get(TeacherCollectionAccessors.mTeacherCollectionFieldFirstName)),
                           StringUtils.capitalize((String) teacherInfo
                               .get(TeacherCollectionAccessors.mTeacherCollectionFieldLastName)));
@@ -199,7 +199,7 @@ public class BrowseClassesActivity extends BaseActivity {
                     }
 
                   } else {
-                    Log.w(TAG,"Get Teacher info failed", task.getException());
+                    Log.w(TAG, "Get Teacher info failed", task.getException());
                   }
                 }
               });
@@ -211,9 +211,34 @@ public class BrowseClassesActivity extends BaseActivity {
     return populateClassList;
   }
 
-  void handleSubscriptionToggle(BrowseClassesActivity bcaObject, String classID) {
+  void handleSubscriptionToggle(final BrowseClassesActivity bcaObject, final String classID,
+      final Switch mSubscribeSwitch, final TextView requestStatus) {
     Log.d(TAG, "handleSubscriptionToggle");
-    bcaObject.sendSubscriptionRequest(classID);
+    whenAllSuccess(ClassRosterCollectionAccessors.getUsersSubscribedClassesTask(mCurrentUserID),
+        SubscriptionRequestsCollectionAccessors.getUsersSubscriptionRequests(mCurrentUserID))
+        .addOnCompleteListener(new OnCompleteListener<List<Object>>() {
+          @Override
+          public void onComplete(@NonNull Task<List<Object>> combinedTask) {
+            if (combinedTask.isSuccessful()) {
+              List<Object> combinedResult = combinedTask.getResult();
+              QuerySnapshot subscribedClasses = (QuerySnapshot) combinedResult.get(0);
+              QuerySnapshot subscriptionRequest = (QuerySnapshot) combinedResult.get(1);
+              int currentlySubscribedClasses = subscribedClasses.getDocuments().size();
+              int currentlyRequestedSubscriptions = subscriptionRequest.getDocuments().size();
+              if ((currentlyRequestedSubscriptions + currentlySubscribedClasses) < 10) {
+                bcaObject.sendSubscriptionRequest(classID);
+              } else {
+                mSubscribeSwitch.setChecked(false);
+                requestStatus.requestFocus();
+                requestStatus.setError("Subscription/Subscription Request Limit Reached!");
+              }
+            } else {
+              Log.d(TAG, "Couldn't retrieve student subscribed classes; Allow subscription",
+                  combinedTask.getException());
+              bcaObject.sendSubscriptionRequest(classID);
+            }
+          }
+        });
   }
 
   private void sendSubscriptionRequest(final String classID) {
@@ -245,7 +270,6 @@ public class BrowseClassesActivity extends BaseActivity {
           Log.d(TAG, "subscriptionRequested:success: " + classID);
           Objects.requireNonNull(availableClassesInfoHash.get(classID)).toggleRequestStatus();
           mAdapter.notifyDataSetChanged();
-          populateAvailableClassesViewData();
         } else {
           Log.w(TAG, "subscriptionRequested:failure: " + classID, task.getException());
         }
