@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import SidebarName from '../../helpers/sidebar.json';
 import { Link, BrowserRouter as Router, Switch, useHistory } from "react-router-dom";
-import T2CC_logo_updated from "./T2CC_logo_updated.png"
+import T2CC_logo_updated from "../../T2CC_logo_updated.png"
 import { logout, getTeacher } from "../../service/Userservice"
 import { AuthContext } from "../../providers/Auth";
 
@@ -49,7 +49,7 @@ const Sidebar = () => {
         <div className="sidebar">
           <div className="user-panel mt-3 pb-3 mb-3 d-flex">
             <div className="info">
-              <a href="#" className="d-block" onClick={ logOut }>{teacher}</a>
+              <a href="#" className="d-block" onClick={ logOut }>{teacher} </a>
             </div>
           </div>
           <nav className="mt-2">

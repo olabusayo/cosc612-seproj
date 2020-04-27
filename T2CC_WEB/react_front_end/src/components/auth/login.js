@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useHistory } from "react-router-dom";
 import { login, logout } from '../../service/Userservice';
+import T2CC_logo_updated from "../../T2CC_logo_updated.png"
 
 const Login = () =>  {
 
@@ -55,6 +56,10 @@ const Login = () =>  {
       <div className="login-page">
         <div className="card">
           <div className="card-body login-card-body" style={{width:'400px'}}>
+            <div className="d-flex justify-content-center">
+              <img width="80px" height="80px" src={T2CC_logo_updated} alt="AdminLTE Logo" className="brand-image img-circle elevation-3"/>
+            </div>
+            <br></br>
             <h2 className="login-box-msg">Please sign in</h2>
             <p style={{color: "red"}} >{error}</p>
             <form method="post">

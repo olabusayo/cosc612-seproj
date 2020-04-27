@@ -6,8 +6,10 @@ router.post('/add', (req, res) => {
     const { course_number, section, teacher_id, term, title, year} = req.body;
     const data = { course_number, section, teacher_id, term, title, year };
     let classRefs = db.collection('classes').add(data).then(ref => {
-        res.send(ref);
+      createClassRoster(ref.id);
+      res.send(ref);
     });
+
 });
 
 router.get('/getAll/:id', (req, res) => {
@@ -36,5 +38,13 @@ router.get('/getAll/:id', (req, res) => {
     });
     
 });
+
+function createClassRoster(id) {
+  let classRefs = db.collection('class_roster').doc(id);
+  classRefs.set({
+    students : []
+  })
+
+}
 
 module.exports = router;

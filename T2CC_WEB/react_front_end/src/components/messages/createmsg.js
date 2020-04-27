@@ -15,19 +15,26 @@ const CreateMessage = () => {
   const [error, setError] = useState('');
   const [classes, setClasses] = useState([]);
 
+
+
   useEffect(() => {
-    getAll(user.email).then(res => {
+    getClasses();
+  }, [userId]);
+
+  const getClasses = () => {
+    getAll(user.uid).then(res => {
       if(Object.keys(res.data).length > 0) {
         const classList = [];
         const data = res.data;
+        console.log(data);
         data.map((myclass, i) => {
           classList.push(<option value={myclass.id}>{myclass.data.course_number}</option>);
         })
         setClasses(classList);
       }
-    });
-  }, [userId]);
-
+    });  
+  }
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -78,6 +85,10 @@ const CreateMessage = () => {
 
   }
 
+  const cancel = () => {
+    setContent('');
+  }
+
     return(
       <section className="content">
         <form>
@@ -105,7 +116,7 @@ const CreateMessage = () => {
 
                   <div className="form-group">
                     <label>Message Content</label>
-                    <textarea placeholder="Type the message content here" name="content" className="form-control" rows="4" onChange={e => handleInputChange(e)}></textarea>
+                    <textarea placeholder="Type the message content here" name="content" value={content} className="form-control" rows="4" onChange={e => handleInputChange(e)}></textarea>
                   </div>
                   
                 </div>
@@ -115,6 +126,9 @@ const CreateMessage = () => {
           <div className="row">
             <div className="col-1">
               <button type="submit" onClick={e => handleSubmit(e)} value="Send" className="btn btn-primary" >Send</button>
+            </div>
+            <div className="col-11">
+              <button type="button" onClick={cancel} value="Send" className="btn btn-primary" >Cancel</button>
             </div>
           </div>
      </form>

@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { register, logout } from '../../service/Userservice';
 import { auth } from "../../properties/firebase";
+import T2CC_logo_updated from "../../T2CC_logo_updated.png"
 
 const Regsiter = () => {
  
@@ -13,6 +14,8 @@ const Regsiter = () => {
   const [pwdVerify, setPwdVerify] = useState('');
   const [error, setError] = useState('');
 
+  const passRegex = RegExp(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/);
+
   let history = useHistory();
 
   const handleSubmit = (e) => {
@@ -22,6 +25,8 @@ const Regsiter = () => {
         setError("Please fill in the required fields");
       } else if (password.localeCompare(pwdVerify) != 0){
         setError("Passwords don'ts match");
+      } else if (!passRegex.test(password)) {
+        setError("Password must contain upper/lowercase characters, a number and a special character");
       }
       else {
 
@@ -74,6 +79,10 @@ const Regsiter = () => {
 
         <div className="card">
           <div className="card-body register-card-body" style={{width:'400px'}}>
+            <div className="d-flex justify-content-center">
+              <img width="80px" height="80px" src={T2CC_logo_updated} alt="AdminLTE Logo" className="brand-image img-circle elevation-3"/>
+            </div>
+            <br></br>
             <h2 className="login-box-msg">Welcome to T2CC</h2>
             <p style={{color: "red"}} >{error}</p>
             <form action="../../index.html" method="post">

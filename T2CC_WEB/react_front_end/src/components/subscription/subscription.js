@@ -83,7 +83,7 @@ const Subscription = () => {
                    {
                     subs.map((item, index) => 
                       <tr key={index}>
-                        <td className="mailbox-subject"><b>{item.student.fname + " " + item.student.lname}</b> requested to join <em>{item.class.data.course_number}</em> </td>
+                        <td className="mailbox-subject"><b>{item.student.fname + " " + item.student.lname}</b> requested to join <em>{item.class.data.course_number + "-" + item.class.data.section}</em> </td>
                         <td className="mailbox-date">
                           <a href="#" onClick={() => approveStudent(item.class.id, item.student.email, index)}><i className="fa fa-check"></i> <span>Approve</span>  </a>                      
                         </td>
