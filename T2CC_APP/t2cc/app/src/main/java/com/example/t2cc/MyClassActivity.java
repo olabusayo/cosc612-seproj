@@ -124,7 +124,7 @@ public class MyClassActivity extends BaseActivity {
 
             String className =
                 (String) classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldTitle);
-            String classNum = String.format("%s-%s",
+            String classNum = String.format("%1$10s%2$10s",
                 classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldCourseNumber),
                 classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldSection));
 
