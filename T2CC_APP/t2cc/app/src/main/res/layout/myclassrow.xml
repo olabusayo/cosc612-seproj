@@ -9,11 +9,13 @@
     <TextView
         android:id="@+id/myClassNumberRowLabel"
         android:layout_width="92dp"
-        android:layout_height="20dp"
+        android:layout_height="40dp"
         android:layout_weight="0"
+        android:gravity="center"
         android:layout_gravity="center_vertical"
-        android:paddingLeft="10dp"
-        android:text="COSC602-02" />
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="WWWW601-66" />
 
     <TextView
         android:id="@+id/myClassNameRowLabel"
