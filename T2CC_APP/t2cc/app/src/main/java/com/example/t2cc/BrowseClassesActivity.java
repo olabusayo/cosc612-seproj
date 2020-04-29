@@ -3,15 +3,21 @@ package com.example.t2cc;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.t2cc.FirestoreConnections.ClassRosterCollectionAccessors;
+import com.example.t2cc.FirestoreConnections.ClassesCollectionAccessors;
+import com.example.t2cc.FirestoreConnections.SubscriptionRequestsCollectionAccessors;
+import com.example.t2cc.FirestoreConnections.TeacherCollectionAccessors;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -20,33 +26,29 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.google.android.gms.tasks.Tasks.whenAllSuccess;
 
-public class BrowseClassesActivity extends BaseActivity implements
-    FirestoreConnections.ClassesCollectionAccessors,
-    FirestoreConnections.ClassRosterCollectionAccessors,
-    FirestoreConnections.SubscriptionRequestsCollectionAccessors {
+public class BrowseClassesActivity extends BaseActivity {
 
   final static String TAG = "T2CC:BrowseClasses";
   private List<ClassListInformation> availableClassesInfo;
   private Map<String, ClassListInformation> availableClassesInfoHash;
   private BrowseClassesAdapter mAdapter;
   private RecyclerView mRecyclerView;
-  // firebase
-  private CollectionReference mClassesRef;
-  private CollectionReference mClassRosterRef;
-  private CollectionReference mSubscriptionRequestsRef;
+  private ProgressBar mProgressBar;
+  private TextView mEmptyText;
 
   // Calendar
   private Calendar mCal;
-  private Date currentDate;
   private Integer currentYear;
   private String currentAcademicTerm;
 
@@ -55,12 +57,13 @@ public class BrowseClassesActivity extends BaseActivity implements
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_browseclass);
 
-    //Calendar
-    mCal = Calendar.getInstance();
-    // firebase
-    mClassesRef = mFBDB.collection(mClassesCollection);
-    mClassRosterRef = mFBDB.collection(mClassRosterCollection);
-    mSubscriptionRequestsRef = mFBDB.collection(mSubscriptionRequestsCollection);
+    // get recycle view
+    mProgressBar = findViewById(R.id.browseClassProgressBar);
+    mEmptyText = findViewById(R.id.browseClassEmptyText);
+    mRecyclerView = findViewById(R.id.subscribe2ClassRecycleView);
+    mRecyclerView.setVisibility(View.GONE);
+    mEmptyText.setVisibility(View.GONE);
+
     findViewById(R.id.subscribe2ClassSubBodyLabel).setOnClickListener(
         new View.OnClickListener() {
           @Override
@@ -69,10 +72,9 @@ public class BrowseClassesActivity extends BaseActivity implements
           }
         });
 
-    // list lookup info
+    mCal = Calendar.getInstance();
     currentYear = mCal.get(Calendar.YEAR);
-    currentDate = mCal.getTime();
-    currentAcademicTerm = getCurrentTerm(currentDate, currentYear);
+    currentAcademicTerm = Utilities.getCurrentTerm(mCal.getTime(), currentYear);
 
     availableClassesInfoHash = new HashMap<>();
     availableClassesInfo = new ArrayList<>();
@@ -84,14 +86,20 @@ public class BrowseClassesActivity extends BaseActivity implements
             if (task.isSuccessful()) {
               Log.d(TAG, "setUpAdapterOnCreate:success");
               setupBrowseClassesAdapter(availableClassesInfo);
+              mProgressBar.setVisibility(View.GONE);
+              mRecyclerView.setVisibility(View.VISIBLE);
+              if (mAdapter.getItemCount() == 0) {
+                mEmptyText.setVisibility(View.VISIBLE);
+              }
+
             } else {
               Log.w(TAG, "setUpAdapterOnCreate:failure");
+              mProgressBar.setVisibility(View.GONE);
+              mEmptyText.setVisibility(View.VISIBLE);
             }
           }
         });
 
-    // get recycle view
-    mRecyclerView = findViewById(R.id.subscribe2ClassRecycleView);
   }
 
   private void setupBrowseClassesAdapter(List<ClassListInformation> availableClassesInfo) {
@@ -101,57 +109,100 @@ public class BrowseClassesActivity extends BaseActivity implements
   }
 
   private Task<List<Object>> populateAvailableClassesViewData() {
-    Task<List<Object>> populateClassList = whenAllSuccess(getAvailableClassesTask(),
-        getUsersSubscribedClassesTask(mCurrentUserID),
-        getUsersSubscriptionRequests(mCurrentUserID));
+    Task<List<Object>> populateClassList =
+        whenAllSuccess(
+            ClassesCollectionAccessors.getAvailableClassesTask(currentYear.toString(),
+                currentAcademicTerm),
+            ClassRosterCollectionAccessors.getUsersSubscribedClassesTask(mCurrentUserID),
+            SubscriptionRequestsCollectionAccessors.getUsersSubscriptionRequests(mCurrentUserID));
     populateClassList.addOnCompleteListener(new OnCompleteListener<List<Object>>() {
       @Override
       public void onComplete(@NonNull Task<List<Object>> task) {
-        if (task.isSuccessful()) {
+        List<Object> docs;
+        if (task.isSuccessful() && ((docs = task.getResult()) != null && !docs.isEmpty())) {
           Log.d(TAG, "populateAvailableClassesViewData:success");
-          List<Object> docs = task.getResult();
-          QuerySnapshot allClassesResult = (QuerySnapshot) docs.get(0);
-          QuerySnapshot myClassesResult = (QuerySnapshot) docs.get(1);
-          QuerySnapshot myRequestsResult = (QuerySnapshot) docs.get(2);
+          final QuerySnapshot allClassesResult = (QuerySnapshot) docs.get(0);
+          final QuerySnapshot myClassesResult = (QuerySnapshot) docs.get(1);
+          final QuerySnapshot myRequestsResult = (QuerySnapshot) docs.get(2);
 
-          for (QueryDocumentSnapshot classDocument : allClassesResult) {
-            Map<String, Object> classInfo = classDocument.getData();
-            String classID = classDocument.getId();
-            //check if student subscribed
-            Boolean isSubcribed = false;
-            for (DocumentSnapshot d : myClassesResult.getDocuments()) {
-              if (d.getId().equals(classID)) {
-                isSubcribed = true;
-                break;
-              }
-            }
-            if (isSubcribed) {
-              // we dont want to add subscribed classes to available class list
-              continue;
-            }
-            //check is student requested
-            Boolean hasBeenRequested = false;
-            for (DocumentSnapshot d : myRequestsResult.getDocuments()) {
-              if (d.getId().equals(classID)) {
-                hasBeenRequested = true;
-                break;
-              }
-            }
+          final List<String> tl = new ArrayList<>();
+          for (DocumentSnapshot doc : allClassesResult.getDocuments()) {
+            tl.add((String) doc.get("teacher_id"));
+          }
+          final Map<String, Map<String, Object>> allTeachersInfoHash = new HashMap<>();
+          TeacherCollectionAccessors.mTeachersRef
+              .get()
+              .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                  if (task.isSuccessful()) {
+                    QuerySnapshot allTeachersResult = task.getResult();
+                    for (DocumentSnapshot teacherInfo : allTeachersResult) {
+                      String teacherID = teacherInfo.getId();
+                      if (tl.contains(teacherID)) {
+                        allTeachersInfoHash.put(teacherID, teacherInfo.getData());
+                      }
+                    }
 
-            String className = (String) classInfo.get(mClassesCollectionFieldTitle);
-            String classNum = String.format("%s-%s",
-                classInfo.get(mClassesCollectionFieldCourseNumber),
-                classInfo.get(mClassesCollectionFieldSection));
-            String requestStatus = hasBeenRequested ? "pending" : "none";
-            ClassListInformation cli = new ClassListInformation(BrowseClassesActivity.this,
-                classID, className, classNum, requestStatus);
-            availableClassesInfoHash.put(classID, cli);
-          }
-          availableClassesInfo.clear();
-          availableClassesInfo.addAll(availableClassesInfoHash.values());
-          if (mAdapter != null) {
-            mAdapter.notifyDataSetChanged();
-          }
+                    for (QueryDocumentSnapshot classDocument : allClassesResult) {
+                      Map<String, Object> classInfo = classDocument.getData();
+                      String classID = classDocument.getId();
+                      //check if student subscribed
+                      boolean isSubscribed = false;
+                      for (DocumentSnapshot d : myClassesResult.getDocuments()) {
+                        if (d.getId().equals(classID)) {
+                          isSubscribed = true;
+                          break;
+                        }
+                      }
+                      if (isSubscribed) {
+                        // we dont want to add subscribed classes to available class list
+                        continue;
+                      }
+                      //check is student requested
+                      boolean hasBeenRequested = false;
+                      for (DocumentSnapshot d : myRequestsResult.getDocuments()) {
+                        if (d.getId().equals(classID)) {
+                          hasBeenRequested = true;
+                          break;
+                        }
+                      }
+
+                      String className = (String) classInfo.get(
+                          ClassesCollectionAccessors.mClassesCollectionFieldTitle);
+                      String classNum = String.format("%1$10s%2$10s",
+                          classInfo
+                              .get(ClassesCollectionAccessors.mClassesCollectionFieldCourseNumber),
+                          classInfo.get(ClassesCollectionAccessors.mClassesCollectionFieldSection));
+                      String teacherID =
+                          (String) classInfo
+                              .get(ClassesCollectionAccessors.mClassesCollectionFieldTeacherID);
+                      Map<String, Object> teacherInfo = allTeachersInfoHash.get(teacherID);
+                      String teacherName = String.format("%s %s",
+                          StringUtils.capitalize((String) teacherInfo
+                              .get(TeacherCollectionAccessors.mTeacherCollectionFieldFirstName)),
+                          StringUtils.capitalize((String) teacherInfo
+                              .get(TeacherCollectionAccessors.mTeacherCollectionFieldLastName)));
+                      String requestStatus = hasBeenRequested ? "pending" : "none";
+                      ClassListInformation cli = new ClassListInformation(
+                          BrowseClassesActivity.this,
+                          classID, className, classNum, teacherName, requestStatus);
+                      availableClassesInfoHash.put(classID, cli);
+                    }
+                    availableClassesInfo.clear();
+                    availableClassesInfo.addAll(availableClassesInfoHash.values());
+                    if (mAdapter != null) {
+                      mAdapter.notifyDataSetChanged();
+                      if (mAdapter.getItemCount() >= 0) {
+                        mEmptyText.setVisibility(View.GONE);
+                      }
+                    }
+
+                  } else {
+                    Log.w(TAG, "Get Teacher info failed", task.getException());
+                  }
+                }
+              });
         } else {
           Log.w(TAG, "populateAvailableClassesViewData:failure:", task.getException());
         }
@@ -160,65 +211,39 @@ public class BrowseClassesActivity extends BaseActivity implements
     return populateClassList;
   }
 
-  private Task<QuerySnapshot> getUsersSubscribedClassesTask(String userID) {
-    return mClassRosterRef
-        .whereArrayContains(mClassRosterCollectionFieldMember, userID).get();
-  }
-
-  private Task<QuerySnapshot> getUsersSubscriptionRequests(String userID) {
-    return mSubscriptionRequestsRef
-        .whereArrayContains(mSubscriptionRequestsCollectionRequests, userID)
-        .get();
-  }
-
-  private Task<QuerySnapshot> getAvailableClassesTask() {
-    return mClassesRef
-        .whereEqualTo(mClassesCollectionFieldYear, currentYear.toString())
-        .whereEqualTo(mClassesCollectionFieldTerm, currentAcademicTerm)
-        .get();
-  }
-
-  private String getCurrentTerm(Date currentDate, Integer currentYear) {
-    String currentAcademicTerm;
-    Calendar tCal = Calendar.getInstance();
-    tCal.set(currentYear, 0, 27);
-    Date springStart = tCal.getTime();
-    tCal.set(currentYear, 4, 19);
-    Date springEnd = tCal.getTime();
-    tCal.set(currentYear, 4, 26);
-    Date summerStart = tCal.getTime();
-    tCal.set(currentYear, 7, 4);
-    Date summerEnd = tCal.getTime();
-    tCal.set(currentYear, 7, 31);
-    Date fallStart = tCal.getTime();
-    tCal.set(currentYear, 11, 21);
-    Date fallEnd = tCal.getTime();
-    tCal.set(currentYear, 0, 2);
-    Date winterStart = tCal.getTime();
-    tCal.set(currentYear, 0, 22);
-    Date winterEnd = tCal.getTime();
-    if (currentDate.compareTo(springStart) >= 0 && currentDate.compareTo(springEnd) <= 0) {
-      currentAcademicTerm = "Spring";
-    } else if (currentDate.compareTo(summerStart) >= 0 && currentDate.compareTo(summerEnd) <= 0) {
-      currentAcademicTerm = "Summer";
-    } else if (currentDate.compareTo(fallStart) >= 0 && currentDate.compareTo(fallEnd) <= 0) {
-      currentAcademicTerm = "Fall";
-    } else if (currentDate.compareTo(winterStart) >= 0 && currentDate.compareTo(winterEnd) <= 0) {
-      currentAcademicTerm = "Winter";
-    } else {
-      currentAcademicTerm = "Unavailable";
-    }
-    return currentAcademicTerm;
-  }
-
-  void handleSubscriptionToggle(BrowseClassesActivity bcaObject, String classID) {
-    Log.d(bcaObject.TAG, "handleSubscriptionToggle");
-      bcaObject.sendSubscriptionRequest(classID);
+  void handleSubscriptionToggle(final BrowseClassesActivity bcaObject, final String classID,
+      final Switch mSubscribeSwitch, final TextView requestStatus) {
+    Log.d(TAG, "handleSubscriptionToggle");
+    whenAllSuccess(ClassRosterCollectionAccessors.getUsersSubscribedClassesTask(mCurrentUserID),
+        SubscriptionRequestsCollectionAccessors.getUsersSubscriptionRequests(mCurrentUserID))
+        .addOnCompleteListener(new OnCompleteListener<List<Object>>() {
+          @Override
+          public void onComplete(@NonNull Task<List<Object>> combinedTask) {
+            if (combinedTask.isSuccessful()) {
+              List<Object> combinedResult = combinedTask.getResult();
+              QuerySnapshot subscribedClasses = (QuerySnapshot) combinedResult.get(0);
+              QuerySnapshot subscriptionRequest = (QuerySnapshot) combinedResult.get(1);
+              int currentlySubscribedClasses = subscribedClasses.getDocuments().size();
+              int currentlyRequestedSubscriptions = subscriptionRequest.getDocuments().size();
+              if ((currentlyRequestedSubscriptions + currentlySubscribedClasses) < 10) {
+                bcaObject.sendSubscriptionRequest(classID);
+              } else {
+                mSubscribeSwitch.setChecked(false);
+                requestStatus.requestFocus();
+                requestStatus.setError("Subscription/Subscription Request Limit Reached!");
+              }
+            } else {
+              Log.d(TAG, "Couldn't retrieve student subscribed classes; Allow subscription",
+                  combinedTask.getException());
+              bcaObject.sendSubscriptionRequest(classID);
+            }
+          }
+        });
   }
 
   private void sendSubscriptionRequest(final String classID) {
     Log.d(TAG, "sendSubscriptionRequest");
-    final DocumentReference classRequestRef = mSubscriptionRequestsRef
+    final DocumentReference classRequestRef = SubscriptionRequestsCollectionAccessors.mSubscriptionRequestsRef
         .document(classID);
     mFBDB.runTransaction(new Transaction.Function<Void>() {
       @Nullable
@@ -226,11 +251,14 @@ public class BrowseClassesActivity extends BaseActivity implements
       public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
         DocumentSnapshot cReqDoc = transaction.get(classRequestRef);
         if (cReqDoc.exists()) {
-          transaction.update(classRequestRef, mSubscriptionRequestsCollectionRequests,
+          transaction.update(classRequestRef,
+              SubscriptionRequestsCollectionAccessors.mSubscriptionRequestsCollectionFieldRequests,
               FieldValue.arrayUnion(mCurrentUserID));
         } else {
           Map<String, Object> req = new HashMap<>();
-          req.put(mSubscriptionRequestsCollectionRequests, FieldValue.arrayUnion(mCurrentUserID));
+          req.put(
+              SubscriptionRequestsCollectionAccessors.mSubscriptionRequestsCollectionFieldRequests,
+              FieldValue.arrayUnion(mCurrentUserID));
           classRequestRef.set(req);
         }
         return null;
@@ -240,9 +268,7 @@ public class BrowseClassesActivity extends BaseActivity implements
       public void onComplete(@NonNull Task<Void> task) {
         if (task.isSuccessful()) {
           Log.d(TAG, "subscriptionRequested:success: " + classID);
-          availableClassesInfoHash.remove(classID);
-          availableClassesInfo.clear();
-          availableClassesInfo.addAll(availableClassesInfoHash.values());
+          Objects.requireNonNull(availableClassesInfoHash.get(classID)).toggleRequestStatus();
           mAdapter.notifyDataSetChanged();
         } else {
           Log.w(TAG, "subscriptionRequested:failure: " + classID, task.getException());

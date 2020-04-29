@@ -1,22 +1,19 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-var t2cc = admin.initializeApp({
+
+const t2cc = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
     databaseURL: "https://cosc612-student-andriod.firebaseio.com"
 });
+
 var mAuth = t2cc.auth();
 var mFBDB = t2cc.firestore();
-
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
+var mFCM = t2cc.messaging();
 
 /*******************FIRESTORE INFO*******************************/
 /**********Classes**********/
 const mClassesCollection = "classes";
+const mClassesCollectionRef = mFBDB.collection(mClassesCollection);
 const mClassesCollectionFieldCourseNumber = "course_number";
 const mClassesCollectionFieldSection = "section";
 const mClassesCollectionFieldTerm = "term";
@@ -24,7 +21,8 @@ const mClassesCollectionFieldTitle = "title";
 const mClassesCollectionFieldYear = "year";
 /**********ClassRoster**********/
 const mClassRosterCollection = "class_roster";
-const mClassRosterCollectionFieldMember = "students";
+const mClassRosterCollectionFieldStudents = "students";
+const mClassRosterRef = mFBDB.collection(mClassRosterCollection);
 /**********Student**********/
 const mStudentsCollection = "students";
 const mStudentCollectionEmail = "email";
@@ -32,74 +30,171 @@ const mStudentCollectionFieldFirstName = "fname";
 const mStudentCollectionFieldLastName = "lname";
 /**********SubscriptionRequests**********/
 const mSubscriptionRequestsCollection = "subscription_requests";
-const mSubscriptionRequestsCollectionRequests = "requests";
+const mSubscriptionRequestsCollectionFieldRequests = "requests";
+/**********Messages**********/
+const  mMessagesCollection = "messages";
+const  mMessagesRef = mFBDB.collection(mMessagesCollection);
+const  mMessagesCollectionFieldClassID = "class_id";
+const  mMessagesCollectionFieldTeacherID = "teacher_id";
+const  mMessagesCollectionFieldContent = "content";
+const  mMessagesCollectionFieldSentTime = "sent_time";
+/**********Notifications**********/
+const mNotificationsCollection = "notifications";
+const mNotificationsRef = mFBDB.collection(mNotificationsCollection);
+const mNotificationsCollectionFieldToken = "notificationToken";
 /*******************FIRESTORE INFO*******************************/
 
-// FIXME TESTING ONLY
-/* This automatically approves all requests. MUST be updated with approval/denial info so
-it can
+/* FIXME FOR TESTING ONLY
+This automatically approves all requests. MUST be updated with approval/denial info
+if used in production
  */
+// exports.handleSubscriptions = functions.firestore
+//     .document(mSubscriptionRequestsCollection + '/' + '{classID}')
+//     .onWrite((change, context) => {
+//         let classID = context.params.classID;
+//         let newReqsArray = change.after.get(mSubscriptionRequestsCollectionFieldRequests);
+//         let oldReqsArray = change.before.get(mSubscriptionRequestsCollectionFieldRequests);
+//         oldReqsArray = oldReqsArray === undefined ? [] : oldReqsArray;
+//         newReqsArray = newReqsArray === undefined ? [] : newReqsArray;
+//         let deletedStudent = oldReqsArray.filter(x => newReqsArray.indexOf(x) === -1);
+//         let addedStudent = newReqsArray.filter(x => oldReqsArray.indexOf(x) === -1);
+//
+//         if (!deletedStudent.isEmpty && !(deletedStudent[0] === undefined)) {
+//             // student request was deleted so assume approval and add to roster
+//             let classRosterRef = mFBDB.collection(mClassRosterCollection).doc(classID);
+//             return classRosterRef.get()
+//                 .then((classDocSnapshot) => {
+//                     return classDocSnapshot.exists
+//                 }, err => console.error(`couldn't retrieve class roster: ${classID} : ${err}`))
+//                 .then(documentExists => {
+//                     console.log(`teacher approved student ${deletedStudent} request...`);
+//                     console.log(`adding student to class: ${classID}...`);
+//                     return documentExists ? classRosterRef.update({
+//                         [mClassRosterCollectionFieldStudents]: admin.firestore.FieldValue.arrayUnion(
+//                             deletedStudent[0])
+//                     }) : classRosterRef.set({
+//                         [mClassRosterCollectionFieldStudents]: admin.firestore.FieldValue.arrayUnion(
+//                             deletedStudent[0])
+//                     });
+//                 }, err => console.error(`couldn't add to roster: ${classID}: ${err}`));
+//         }
+//
+//         if (!addedStudent.isEmpty && !(addedStudent[0] === undefined)) {
+//             // student request was added, "handle" by removing from request table
+//             let subRequestRef = change.after.ref;
+//             return subRequestRef.get()
+//                 .then((reqDocSnapshot) => {
+//                     return reqDocSnapshot.exists
+//                 }, err => console.error(`couldn't retrieve request: ${classID} : ${err}`))
+//                 .then(documentExists => {
+//                     console.log(`student ${addedStudent} requested subscription...`);
+//                     console.log(`"handle" request for ${classID}...`);
+//                     return subRequestRef.update({
+//                         [mSubscriptionRequestsCollectionFieldRequests]: admin.firestore.FieldValue.arrayRemove(
+//                             addedStudent[0])
+//                     });
+//                 }, err => console.error(`couldn't remove request: ${classID}: ${err}`));
+//         }
+//
+//         return null;
+//     });
 
-exports.handleSubscriptions = functions.firestore
-    .document(mSubscriptionRequestsCollection + '/' + '{classID}')
-    .onUpdate((change, context) => {
+// enables/disables students from class notifications
+exports.toggleAlertNotifications = functions.firestore
+    .document(mClassRosterCollection + '/' + '{classID}')
+    .onWrite((change, context) => {
         let classID = context.params.classID;
-        let newReqsArray = change.after.get(mSubscriptionRequestsCollectionRequests);
-        let oldReqsArray = change.before.get(mSubscriptionRequestsCollectionRequests);
-        let deletedStudent = oldReqsArray.filter(x => newReqsArray.indexOf(x) === -1);
-        let addedStudent = newReqsArray.filter(x => oldReqsArray.indexOf(x) === -1);
+        let newStudentsArray = change.after.get(mClassRosterCollectionFieldStudents);
+        let oldStudentsArray = change.before.get(mClassRosterCollectionFieldStudents);
+        oldStudentsArray = oldStudentsArray === undefined ? [] : oldStudentsArray;
+        newStudentsArray = newStudentsArray === undefined ? [] : newStudentsArray;
+        let deletedStudent = oldStudentsArray.filter(x => newStudentsArray.indexOf(x) === -1);
+        let addedStudent =  newStudentsArray.filter(x => oldStudentsArray.indexOf(x) === -1);
 
         if (!deletedStudent.isEmpty && !(deletedStudent[0] === undefined)) {
-            // student request was deleted so assume approval and add to roster
-            console.log(`teacher approved request: ${deletedStudent}`);
-            console.log(`adding student to class: ${classID}`);
-            let classRosterRef = mFBDB.collection(mClassRosterCollection).doc(classID);
-            return classRosterRef.get()
-                .then((classDocSnapshot) => {
-                    return classDocSnapshot.exists
-                }, err => console.error(`couldn't retrieve class roster: ${classID} : ${err}`))
-                .then(documentExists => {
-                    return documentExists ? classRosterRef.update({
-                        [mClassRosterCollectionFieldMember]: admin.firestore.FieldValue.arrayUnion(
-                            deletedStudent[0])
-                    }) : classRosterRef.set({
-                        [mClassRosterCollectionFieldMember]: admin.firestore.FieldValue.arrayUnion(
-                            deletedStudent[0])
-                    });
-                }, err => console.error(`couldn't add to roster: ${classID}: ${err}`));
+            // student unsubscribed from class so unsubscribe from topic
+            // look up registration token
+            let studentID = deletedStudent[0];
+            let notificationsRef = mNotificationsRef.doc(studentID);
+            return notificationsRef.get()
+                .then((studentDocSnapshot) => {
+                    if (studentDocSnapshot.exists) {
+                        // return studentDocSnapshot.get(mNotificationsCollectionFieldToken);
+                        let registrationToken = studentDocSnapshot.get(mNotificationsCollectionFieldToken);
+                        //console.log(`response from ${registrationToken}`);
+                        if (!(registrationToken === null) && !(registrationToken === undefined)) {
+                            console.log(`student ${deletedStudent} unsubscribed from class...`);
+                            console.log(`unsubscribing from topic: ${classID}...`);
+                            return mFCM.unsubscribeFromTopic(registrationToken, classID);
+                        }
+                    }
+                    console.log(`student ${studentID} not registered or not subscribed`)
+                    return null;
+                })
+                .catch((error) => {
+                    console.log(`Error unsubscribing student: ${studentID}:`, error);
+                });
         }
 
-        if (!addedStudent.isEmpty && !(addedStudent === undefined)) {
-            // student request was added, "handle" by removing from request table
-            console.log(`student requested subscription: ${addedStudent}`);
-            console.log(`"handle" request`);
-            sleep(between(3000, 10000));
-            let subRequestRef = change.after.ref;
-            return subRequestRef.get()
-                .then((reqDocSnapshot) => {
-                    return reqDocSnapshot.exists
-                }, err => console.error(`couldn't retrieve request: ${classID} : ${err}`))
-                .then(documentExists => {
-                    return subRequestRef.update({
-                        [mSubscriptionRequestsCollectionRequests]: admin.firestore.FieldValue.arrayRemove(
-                            addedStudent[0])
-                    });
-                }, err => console.error(`couldn't remove request: ${classID}: ${err}`));
+        if (!addedStudent.isEmpty && !(addedStudent[0] === undefined)) {
+            // student subscribed to class, so subscribe to topic
+            // look up registration token
+            let studentID = addedStudent[0];
+            let notificationsRef = mNotificationsRef.doc(studentID);
+            return notificationsRef.get()
+                .then((studentDocSnapshot) => {
+                    //return studentDocSnapshot.exists
+                    if (studentDocSnapshot.exists) {
+                        // return studentDocSnapshot.get(mNotificationsCollectionFieldToken);
+                        let registrationToken = studentDocSnapshot.get(mNotificationsCollectionFieldToken);
+                        //console.log(`response from ${registrationToken}`);
+                        if (!(registrationToken === null) && !(registrationToken === undefined)) {
+                            console.log(`student ${addedStudent} subscribed to class...`);
+                            console.log(`subscribing to topic: ${classID}...`);
+                            return mFCM.subscribeToTopic(registrationToken, classID);
+                        }
+                    }
+                    console.log(`student ${studentID} not registered`)
+                    return null;
+                })
+                .catch((error) => {
+                    console.log(`Error subscribing student: ${studentID}:`, error);
+                });
         }
 
         return null;
     });
 
-// sleep function
-function sleep(ms) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-}
+// send alert notification
+// change to OnWrite for testing purposes
+exports.sendAlertNotifications = functions.firestore
+    .document(mMessagesCollection + '/' + '{messageID}')
+    .onCreate((messageSnap, context) => {
+        let newMessage = messageSnap.data();
+        let notificationTopic = newMessage[mMessagesCollectionFieldClassID];
+        let classInfoRef = mClassesCollectionRef.doc(notificationTopic);
 
-//random number gen
-function between(min, max) {
-    return Math.floor(
-        Math.random() * (max - min) + min
-    )
-}
+        return classInfoRef.get().then(
+            (classInfo) => {
+                let classTitle = `(${classInfo.get(mClassesCollectionFieldCourseNumber)}-${classInfo.get(mClassesCollectionFieldSection)}) ${classInfo.get(mClassesCollectionFieldTitle)}`;
+                const notificationData = {
+                    "notification": {
+                        title: classTitle,
+                        body: "New message from class"
+                    }
+                };
+                return mFCM.sendToTopic(notificationTopic, notificationData)
+                    .then((response) => {
+                        // Response is a message ID string.
+                        console.log('Sending message to:', notificationTopic);
+                        console.log('Successfully sent message:', response);
+                        return response;
+                    })
+                    .catch((error) => {
+                        console.log('Error sending message to:', notificationTopic);
+                        console.log('Error sending message:', error);
+                    });
+            });
+
+    });
+

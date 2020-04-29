@@ -59,6 +59,11 @@ public class LoginActivity extends AppCompatActivity implements
   }
 
   @Override
+  public void onBackPressed() {
+    finishAffinity();
+  }
+
+  @Override
   public void onClick(View v) {
     int i = v.getId();
     if (i == R.id.loginButton) {
@@ -119,7 +124,8 @@ public class LoginActivity extends AppCompatActivity implements
                   mPasswordField.requestFocus();
                 }
               } catch (Exception e) {
-                Toast.makeText(LoginActivity.this, "Authentication failed.\n" + genException.getMessage(),
+                Toast.makeText(LoginActivity.this,
+                    "Authentication failed.\n" + genException.getMessage(),
                     Toast.LENGTH_LONG).show();
               }
               updateUI(null);

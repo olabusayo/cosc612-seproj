@@ -1,6 +1,7 @@
 package com.example.t2cc;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,7 +47,7 @@ public class MyClassAdapter extends RecyclerView.Adapter<MyClassViewHolder> {
     holder.myClassNumberLabel.setText(mdata.get(position).classNumber);
     holder.myClassNameLabel.setText(mdata.get(position).className);
     holder.myClassSubscribeSwitchRow.setChecked(true);
-    holder.myClassUnReadMsgLabel.setText((mdata.get(position).unreadMessageCount).toString());
+    holder.myClassTeacher.setText(mdata.get(position).teacherName);
 
     holder.myClassSubscribeSwitchRow.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -57,6 +58,22 @@ public class MyClassAdapter extends RecyclerView.Adapter<MyClassViewHolder> {
       }
     });
 
+    holder.myClassMessageImage.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        String classID = mdata.get(position).classID;
+        String className = mdata.get(position).className;
+        changeToMessageActivity(classID, className);
+      }
+    });
+  }
+
+  private void changeToMessageActivity(String classID, String className) {
+      Intent intent = new Intent(mcontext, MessageActivity.class);
+      intent.putExtra("CLASS_ID", classID);
+      intent.putExtra("CLASS_NAME", className);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      mcontext.startActivity(intent);
   }
 
   @Override

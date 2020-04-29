@@ -15,11 +15,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     // for debugging
     private static final String TAG = "MessageAdapter: ";
 
-    private List<messageData> mdata;
+    private List<MessageData> mdata;
     private Context mcontext;
 
     // constructor
-    public MessageAdapter (List<messageData> data, Context context){
+    public MessageAdapter (List<MessageData> data, Context context){
         mdata = data;
         mcontext = context;
     }
@@ -42,8 +42,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
         Log.d(TAG, "BindViewHolder: called.");
 
         // set the information
-        holder.messageNumberLabel.setText(mdata.get(position).messageNumberLabel);
-        holder.classNumberLabel.setText(mdata.get(position).classNumberLabel);
+        holder.classNameLabel.setText(mdata.get(position).classNameLabel);
         holder.dateLabel.setText(mdata.get(position).dateLabel);
         holder.messageTextField.setText(mdata.get(position).messageTextField);
 
