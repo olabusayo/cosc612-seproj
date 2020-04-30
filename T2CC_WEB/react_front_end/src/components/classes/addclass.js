@@ -41,12 +41,31 @@ const AddClass = () => {
 
     if(!classtitle || !courseno || !section || !term || !year) {
       setError("Please fill in the required fields");
-    } else if(section < 1 || section > 10) {
-      setError("Please enter a valid section (01 to 10)");
+    } else if(courseno.length > 10) {
+      setError("Course number must be at most 10 characters");
+    }
+    else if(!validateSection(section)) {
+      setError("Please enter a valid section (00 to 09)");
     } 
     else {
       createClass();
     }
+  }
+
+  const validateSection = (section) => {
+    if(section.length != 2) {
+      return false
+    }
+    var tempSection = 0;
+    try {
+      tempSection = parseInt(section);
+      if(tempSection < 0 || tempSection >= 10) {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+    return true;
   }
 
   const handleInputChange = (event) => {
@@ -95,13 +114,14 @@ const AddClass = () => {
                   </div>
                   <div className="form-group">
                     <label>Section</label><span className="error-class">*</span>
-                    <input placeholder="Section" type="number" name="section" className="form-control" onChange={e => handleInputChange(e)}/>
+                    <input placeholder="Section (00 to 09)" type="text" name="section" className="form-control" onChange={e => handleInputChange(e)}/>
                   </div>
                   <div class="form-group">
                     <label htmlFor="inputStatus">Term</label><span className="error-class">*</span>
                     <select class="form-control custom-select" name="term" onChange={e => handleInputChange(e)}>
                       <option selected disabled>Select one</option>
                       <option value="Fall">Fall</option>
+                      <option value="Winter">Winter</option>
                       <option value="Spring">Spring</option>
                       <option value="Summer">Summer</option>
                     </select>
@@ -110,8 +130,11 @@ const AddClass = () => {
                     <label htmlFor="inputStatus">Year</label><span className="error-class">*</span>
                     <select class="form-control custom-select" name="year" onChange={e => handleInputChange(e)}>
                       <option selected disabled>Select one</option>
-                      <option value="2020">{years[0]}</option>
-                      <option value="2020">{years[1]}</option>
+                      {
+                        years.map((year, i) => (
+                          <option value={year}>{year}</option>
+                        ))
+                      }
                     </select>
                   </div>
                 </div>

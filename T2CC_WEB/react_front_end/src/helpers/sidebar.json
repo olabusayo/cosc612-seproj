@@ -13,7 +13,7 @@
                   "Active":true
                 },
                 {
-              		"Main_Moudle_Name" : "Subscription Request",
+              		"Main_Moudle_Name" : "Subscription Requests",
                   "Url": "subscription",
                   "Icon":"nav-icon fa fa-user-plus",
                   "Active":true
