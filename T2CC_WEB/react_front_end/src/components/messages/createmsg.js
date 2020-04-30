@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from "../../providers/Auth";
 import { useHistory } from "react-router-dom";
-import { getAll } from "../../service/Classservice"
+import { getAll, isActive } from "../../service/Classservice"
 import { create, saveDraft } from "../../service/Messageservice"
 
 const CreateMessage = () => {
@@ -28,7 +28,9 @@ const CreateMessage = () => {
         const data = res.data;
         console.log(data);
         data.map((myclass, i) => {
-          classList.push(<option value={myclass.id}>{myclass.data.course_number}</option>);
+          if(isActive(myclass.data.term, myclass.data.year)) {
+            classList.push(<option value={myclass.id}>{myclass.data.course_number}</option>);
+          }
         })
         setClasses(classList);
       }
@@ -40,7 +42,7 @@ const CreateMessage = () => {
     e.preventDefault();
     const { value } = e.currentTarget;
 
-    if(!classTitle) {
+    if(!classTitle || !content) {
       setError("Please fill in the required fields");
     } else if(content.length >= 250 ) {
       setError("The message should not exceed 250 characters");
@@ -86,7 +88,7 @@ const CreateMessage = () => {
   }
 
   const cancel = () => {
-    setContent('');
+    history.push("/");
   }
 
     return(
@@ -115,7 +117,7 @@ const CreateMessage = () => {
                   </div>
 
                   <div className="form-group">
-                    <label>Message Content</label>
+                    <label>Message Content</label><span className="error-class">*</span>
                     <textarea placeholder="Type the message content here" name="content" value={content} className="form-control" rows="4" onChange={e => handleInputChange(e)}></textarea>
                   </div>
                   

@@ -31,10 +31,13 @@ export const isActive = (term, year) => {
 
 export const getYear = () => {
     const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const nextYear = currentYear + 1;
+    let currentYear = currentDate.getFullYear();
     let res = [];
     res.push(currentYear);
-    res.push(nextYear);
+    currentYear++;
+    for(var i=0; i<9; i++) {
+        res.push(currentYear);
+        currentYear++;
+    }
     return res;
 }

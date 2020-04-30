@@ -49,7 +49,8 @@ const Sidebar = () => {
         <div className="sidebar">
           <div className="user-panel mt-3 pb-3 mb-3 d-flex">
             <div className="info">
-              <a href="#" className="d-block" onClick={ logOut }>{teacher} </a>
+              <p style={{color: "wheat"}}>{teacher}</p>
+              <a href="#" className="d-block" onClick={ logOut }> Sign out </a>
             </div>
           </div>
           <nav className="mt-2">

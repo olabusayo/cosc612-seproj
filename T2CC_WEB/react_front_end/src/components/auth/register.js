@@ -24,9 +24,9 @@ const Regsiter = () => {
       if(!email || !password || !fname || !lname || !pwdVerify) {
         setError("Please fill in the required fields");
       } else if (password.localeCompare(pwdVerify) != 0){
-        setError("Passwords don'ts match");
-      } else if (!passRegex.test(password)) {
-        setError("Password must contain upper/lowercase characters, a number and a special character");
+        setError("Passwords don't match");
+      } else if (!passRegex.test(password) || password.length < 8) {
+        setError("Password must be at least 8 characters, contains at least 1 uppercase, 1 lowercase, 1 number and 1 special character (!,@,#,$,%,^,&,*)");
       }
       else {
 
