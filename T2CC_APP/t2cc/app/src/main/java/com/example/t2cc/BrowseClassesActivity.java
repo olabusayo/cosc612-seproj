@@ -90,8 +90,9 @@ public class BrowseClassesActivity extends BaseActivity {
               mRecyclerView.setVisibility(View.VISIBLE);
               if (mAdapter.getItemCount() == 0) {
                 mEmptyText.setVisibility(View.VISIBLE);
+              } else {
+                mAdapter.notifyDataSetChanged();
               }
-
             } else {
               Log.w(TAG, "setUpAdapterOnCreate:failure");
               mProgressBar.setVisibility(View.GONE);
@@ -193,7 +194,7 @@ public class BrowseClassesActivity extends BaseActivity {
                     availableClassesInfo.addAll(availableClassesInfoHash.values());
                     if (mAdapter != null) {
                       mAdapter.notifyDataSetChanged();
-                      if (mAdapter.getItemCount() >= 0) {
+                      if (mAdapter.getItemCount() > 0) {
                         mEmptyText.setVisibility(View.GONE);
                       }
                     }

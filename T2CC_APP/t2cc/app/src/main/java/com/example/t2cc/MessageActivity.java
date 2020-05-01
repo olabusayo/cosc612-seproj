@@ -123,6 +123,8 @@ public class MessageActivity extends BaseActivity {
                     mRecyclerView.setVisibility(View.VISIBLE);
                     if(mAdapter.getItemCount() == 0){
                       mEmptyText.setVisibility(View.VISIBLE);
+                    } else {
+                      mAdapter.notifyDataSetChanged();
                     }
                   } else {
                     Log.w(TAG, "setUpAdapterOnCreate:failure");
