@@ -80,6 +80,8 @@ public class MyClassActivity extends BaseActivity {
               mRecyclerView.setVisibility(View.VISIBLE);
               if (mAdapter.getItemCount() == 0) {
                 emptyClass.setVisibility(View.VISIBLE);
+              } else {
+                mAdapter.notifyDataSetChanged();
               }
             } else {
               Log.w(TAG, "setUpAdapterOnCreate:failure");

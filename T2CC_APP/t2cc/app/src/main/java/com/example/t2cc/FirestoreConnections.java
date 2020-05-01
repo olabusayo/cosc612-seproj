@@ -43,9 +43,13 @@ public class FirestoreConnections {
       //  classes
       List<String> hardLimitClassList = classIDs.subList(0, Math.min(classIDs.size(),
           10));
-      return mClassesRef
-          .whereIn(FieldPath.documentId(), hardLimitClassList)
-          .get();
+      if(hardLimitClassList.size() > 0) {
+        return mClassesRef
+            .whereIn(FieldPath.documentId(), hardLimitClassList)
+            .get();
+      } else {
+        return null;
+      }
     }
 
     public static Task<QuerySnapshot> getAvailableClassesTask(String currentYear,
@@ -121,11 +125,15 @@ public class FirestoreConnections {
       //  classes
       List<String> hardLimitClassList = classIDs.subList(0, Math.min(classIDs.size(),
           10));
-      return mMessagesRef
-          .whereGreaterThanOrEqualTo(mMessagesCollectionFieldSentTime, tsCutOffDate)
-          .whereIn(mMessagesCollectionFieldClassID, hardLimitClassList)
-          .orderBy(mMessagesCollectionFieldSentTime, messageSortDirection)
-          .get();
+      if(hardLimitClassList.size() > 0) {
+        return mMessagesRef
+            .whereGreaterThanOrEqualTo(mMessagesCollectionFieldSentTime, tsCutOffDate)
+            .whereIn(mMessagesCollectionFieldClassID, hardLimitClassList)
+            .orderBy(mMessagesCollectionFieldSentTime, messageSortDirection)
+            .get();
+      } else {
+        return null;
+      }
     }
 
     public static Task<QuerySnapshot> getMessagesForSpecificClass(String classID,
